@@ -1,0 +1,174 @@
+
+:root {
+  --box-shadow: inset 0 0 0 2000px rgba(7, 2, 82, 0.6);
+  --font-family:  Georgia, 'Times New Roman', Times, serif;
+  --background-position: center;
+  --background-repeat: no-repeat;
+  --background-size: cover;
+  --opacity: 90%;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.profile-info{
+  /* border: 2px solid black; */
+  width: 50%;
+  /*text-align: left;
+  padding-left: 2%;
+  height: 50vh;
+  justify-content: left; */
+}
+
+.dialog {
+  border: 2px solid black;
+}
+
+/* .save-email-button {
+  border: 2px solid black;
+  padding: 1%;
+  margin: 0 auto;
+  text-align: left;
+  position: relative;
+  transform: translateX(40%);
+} */
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+ul {
+display: flex;
+justify-content: left;
+list-style: none;
+}
+
+/* .form-button {
+  margin-left: auto;
+  margin-right: ;
+} */
+.log-in-button {
+  border: 2px solid black;
+  margin-left: auto;
+  margin-right: 2.5%;
+}
+
+.dashboard-button {
+  border: 2px solid black;
+  margin-right: 2.5%;
+}
+
+.landing-page-title {
+  border: 2px solid black;
+  margin: auto;
+  width: 50%;
+  text-align: center;
+  display: block;
+  position: absolute;
+  margin-top: 20%;
+  margin-left: 25%;
+  text-align: center;
+  /* padding-left: 10%; */
+  font-family: var(--font-family);
+  font-size: 250%;
+  white-space: nowrap;
+  z-index: 1;
+  color: white;
+}
+
+.landing-page-text {
+  border: 2px solid black;
+  width: 60%;
+  display: block;
+  position: absolute;
+  margin-top: 30%;
+  margin-left: 20%;
+  /* right: 0px; */
+  background-color: whitesmoke;
+  
+}
+
+.nav-bar-container {
+ /* border: 2px solid black; */
+  position: fixed;
+  width: 100vw;
+  z-index: 10;
+}
+
+.footer-container {
+  position: absolute;
+  border: 2px solid black;
+  width: 100vw;
+  box-shadow: var(--box-shadow);
+}
+
+/* div.outer-form-container {
+  border: 2px solid black;
+  z-index: 9;
+  position: fixed;
+  width: 100vw;
+  box-shadow: inset 0 0 0 2000px rgba(7, 2, 82, 0.8);
+} */
+
+div.inner-section-container {
+  height: 100vh;
+  width: 100vw;
+  background-position: var(--background-position);
+  background-size: var(--background-size);
+  background-repeat: var(--background-repeat);
+  opacity: var(--opacity);
+  box-shadow: var(--box-shadow);
+}
+
+div.one{
+  background-image: url('images/sunset.jpeg');
+}
+
+div.two{
+  background-image: url('images/gbft.jpeg');
+}
+
+div.three {
+  background-image: url('images/jl.jpeg');
+}
+
+div.four {
+  background-image: url('images/jp.jpeg');
+}
+
+.element {
+  /* border: 2px solid black; */
+  height: 100vh;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
