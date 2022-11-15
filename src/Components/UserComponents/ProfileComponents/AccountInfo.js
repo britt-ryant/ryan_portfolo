@@ -11,6 +11,7 @@ import {
     Divider,
     Grid,
     IconButton,
+    TextField,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -44,7 +45,6 @@ class AccountInfo extends React.Component{
         const lastName = this.properCaps(user.last);
         const lastFour = user.password.toString().replace(/.(?=.{4,}$)/g, 'X');
         const userPassword = user.password.toString()
-        console.log(user.password);
         return(
             <Paper sx={{
                         width: ['90%', '50%', '50%'],
@@ -58,6 +58,7 @@ class AccountInfo extends React.Component{
                         boxShadow: 20
                         }}>
                 <Stack>
+                    {this.props.renderEdit ? 
                     <Typography 
                                 noWrap
                                 component="h2" 
@@ -68,11 +69,26 @@ class AccountInfo extends React.Component{
                                 variant="h4" 
                                 color="primary" 
                                 gutterBottom
-                    >
-                        {firstName} {lastName}
+                            >
+                                {firstName} {lastName}
                     </Typography>
+                    : 
+                    <TextField
+                            key={1}
+                            //error={error.first[0]} 
+                            id="outlined-basic 1" 
+                            label="First Name" 
+                            variant="outlined" 
+                            name='first' 
+                            //value={formData.first}
+                            onChange={this.props.setFormData}
+                            pattern="\S(.*\S)?"
+                            required/>
+
+                    }
+
                     <Typography 
-                                component="h8" 
+                                component="h5" 
                                 sx={{
                                     p:1
                                 }}

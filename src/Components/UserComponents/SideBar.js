@@ -127,6 +127,7 @@ const SideBar = () => {
     const [open, setOpen] = React.useState(false);
     const [redirect, setRedirect] = React.useState(false);
     const [mode, setMode] = React.useState("Light Mode");
+    const [edit, setEdit] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -143,6 +144,7 @@ const SideBar = () => {
             break;
             case "Edit Account":
                 console.log(`Go to edit account page`);
+                setEdit(!edit)
             break;
             case "Send Message":
                 console.log("Go to send message page");
@@ -274,7 +276,7 @@ const SideBar = () => {
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4, marginLeft: 1}}>
                         <Grid container spacing={3} >
                             <Grid item xs={12} md={8} lg={9}>
-                                <AccountInfo />
+                                <AccountInfo renderEdit={edit}/>
                                 <MessageComponent />
                             </Grid>
                         </Grid>

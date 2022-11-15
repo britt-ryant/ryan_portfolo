@@ -15,7 +15,8 @@ import {
     TableRow,
     TableHead,
     TableCell,
-    TableBody
+    TableBody,
+    withStyles
 } from '@mui/material';
 
 
@@ -144,12 +145,12 @@ class MessageComponent extends React.Component{
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {!this.state.loading && !this.state.error && this.state.renderMessages? this.state.renderMessages.map((message) => {
+                        {!this.state.loading && !this.state.error && this.state.renderMessages? this.state.renderMessages.map((message, key) => {
                             const newDate = new Date(message.timestamp.slice(0, -1));
                             const date = newDate.toString().slice(0, 15);
                             const time = newDate.toLocaleTimeString();
                             return(
-                                <TableRow key={message.id}>
+                                <TableRow key={message.id} >
                                     <TableCell sx={{width: 150}}>{time}</TableCell>
                                     <TableCell sx={{width: 200}}>{date}</TableCell>
                                     <TableCell>{message.message}</TableCell>
