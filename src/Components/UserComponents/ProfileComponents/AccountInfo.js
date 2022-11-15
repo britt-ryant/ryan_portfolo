@@ -23,8 +23,10 @@ class AccountInfo extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            ...this.props
-        }
+            ...this.props,
+            showPassword: false
+        };
+        this.showPassword = this.showPassword.bind(this);
     }
 
     properCaps(string){
@@ -32,17 +34,22 @@ class AccountInfo extends React.Component{
         word += string.slice(1).toLowerCase();
         return word;
     }
+
+    showPassword(){
+        this.setState({showPassword: !this.state.showPassword})
+    }
     render(){
         const user = this.state.user.userInfo;
         const firstName = this.properCaps(user.first);
         const lastName = this.properCaps(user.last);
         const lastFour = user.password.toString().replace(/.(?=.{4,}$)/g, 'X');
-        console.log(lastFour);
+        const userPassword = user.password.toString()
+        console.log(user.password);
         return(
             <Paper sx={{
-                        width: '50%',
-                        minWidth: '400px', 
-                        height: '25vh',
+                        width: ['90%', '50%', '50%'],
+                        minWidth: '50%', 
+                        height: '50%',
                         p: 2,
                         paddingTop: 5,
                         flexDirection: 'column',
@@ -52,25 +59,24 @@ class AccountInfo extends React.Component{
                         }}>
                 <Stack>
                     <Typography 
+                                noWrap
                                 component="h2" 
                                 sx={{
-                                    fontSize: 40,
                                     p: 1,
                                     paddingBottom:0,
                                 }}
-                                variant="h6" 
+                                variant="h4" 
                                 color="primary" 
                                 gutterBottom
                     >
                         {firstName} {lastName}
                     </Typography>
                     <Typography 
-                                component="h2" 
+                                component="h8" 
                                 sx={{
-                                    fontSize: 12,
-                                    paddingLeft: 2,
+                                    p:1
                                 }}
-                                variant="h6" 
+                                variant="h8" 
                                 color="primary" 
                                 gutterBottom
                     >
@@ -78,9 +84,9 @@ class AccountInfo extends React.Component{
                     </Typography>
                     <Divider />
                     <Typography 
+                                noWrap
                                 component="h2" 
                                 sx={{
-                                    fontSize: 25,
                                     paddingLeft: 1,
                                     paddingTop: 3
                                 }}
@@ -89,19 +95,32 @@ class AccountInfo extends React.Component{
                     >
                         {user.email}
                     </Typography>
-                    <Grid>
+                    <Divider />
+                    <Grid 
+                                sx={{
+                                display: 'flex',
+                                p: 1,
+                                alignItems: 'center',
+                                minWidth: '50%'
+                            }}>
                         <Typography 
+                                    noWrap
                                     varient="password"
                                     component="h2" 
                                     sx={{
-                                        fontSize: 20,
-                                        p: 1,
+                                        textAlign: 'no-wrap',
+                                        paddingRight: 10,
+                                        minWidth: '82%'
                                     }}
-                                    gutterBottom
+                                    // gutterBottom
                         >
-                            Password: {user.password}
+                         Password: {this.state.showPassword ? userPassword : lastFour}
                         </Typography>
+                        <IconButton onClick={this.showPassword} sx={{paddingLeft: 1, marginLeft: 3}}>
+                            {this.state.showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </IconButton>
                     </Grid>
+                    <Divider />
                 </Stack>
             </Paper>
         )
