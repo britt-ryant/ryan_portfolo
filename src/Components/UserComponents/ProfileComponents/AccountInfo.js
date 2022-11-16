@@ -3,6 +3,8 @@ import React from 'react';
 //import redux components
 import { connect } from 'react-redux';
 
+import {Toaster} from 'react-hot-toast';
+
 //import mui components
 import {
     Paper,
@@ -15,6 +17,9 @@ import {
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import EditIcon from '@mui/icons-material/Edit';
+import { createAccountFormReducer, editAccountFormReducer } from '../../../redux/userSlice';
+import FormDialog from '../../FormComponents/FormDialog';
 
 const stateToProps = (state) => {
     return state
@@ -28,6 +33,8 @@ class AccountInfo extends React.Component{
             showPassword: false
         };
         this.showPassword = this.showPassword.bind(this);
+        this.editAccount = this.editAccount.bind(this);
+        this.handleFormClose = this.handleFormClose.bind(this);
     }
 
     properCaps(string){
@@ -39,13 +46,37 @@ class AccountInfo extends React.Component{
     showPassword(){
         this.setState({showPassword: !this.state.showPassword})
     }
+    editAccount(){
+        console.log('edit Account');
+        const { dispatch } = this.props;
+        dispatch(editAccountFormReducer())
+    }
+
+    handleFormClose(){
+        console.log('form close');
+        const { dispatch } = this.props;
+        dispatch(editAccountFormReducer());
+    }
+    successToast(){
+        console.log('success toast');
+    }
+    handleCreateAccountRender(){
+        console.log('create account render');
+    }
     render(){
         const user = this.state.user.userInfo;
         const firstName = this.properCaps(user.first);
         const lastName = this.properCaps(user.last);
         const lastFour = user.password.toString().replace(/.(?=.{4,}$)/g, 'X');
-        const userPassword = user.password.toString()
+        const userPassword = user.password.toString();
+        const editForm = this.props.user.renderForm.editAccount;
         return(
+            <div>
+
+            <Toaster 
+            position='top-left'
+            reverseOrder={true}
+             />
             <Paper sx={{
                         width: ['90%', '50%', '50%'],
                         minWidth: '50%', 
@@ -58,7 +89,6 @@ class AccountInfo extends React.Component{
                         boxShadow: 20
                         }}>
                 <Stack>
-                    {this.props.renderEdit ? 
                     <Typography 
                                 noWrap
                                 component="h2" 
@@ -72,20 +102,6 @@ class AccountInfo extends React.Component{
                             >
                                 {firstName} {lastName}
                     </Typography>
-                    : 
-                    <TextField
-                            key={1}
-                            //error={error.first[0]} 
-                            id="outlined-basic 1" 
-                            label="First Name" 
-                            variant="outlined" 
-                            name='first' 
-                            //value={formData.first}
-                            onChange={this.props.setFormData}
-                            pattern="\S(.*\S)?"
-                            required/>
-
-                    }
 
                     <Typography 
                                 component="h5" 
@@ -137,8 +153,17 @@ class AccountInfo extends React.Component{
                         </IconButton>
                     </Grid>
                     <Divider />
+                        <IconButton onClick={this.editAccount}>
+                            <EditIcon />
+                        </IconButton>
+                        {this.props.user.renderForm.editAccount ? <FormDialog
+                                                                        editForm={true}
+                                                                        handleFormClose={this.handleFormClose} 
+                                                                        successToast={this.successToast} 
+                                                                         /> : null}
                 </Stack>
             </Paper>
+            </div>
         )
     }
 };

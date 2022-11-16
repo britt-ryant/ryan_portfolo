@@ -39,6 +39,7 @@ import MessageComponent from './ProfileComponents/MessageComponent';
 
 //import react-router-dom components
 import { Navigate } from 'react-router-dom';
+import FormDialog from '../FormComponents/FormDialog';
 
 const darkTheme = createTheme({
     palette: {
@@ -120,7 +121,7 @@ const AppBar = styled(MuiAppBar, {
   }));
 
 
-const SideBar = () => {
+const SideBar = (props) => {
     const user = useSelector(state => state.user);
     const initials = `${user.userInfo.first.charAt(0).toUpperCase()}${user.userInfo.last.charAt(0).toUpperCase()}`;
     const theme = useTheme();
@@ -144,7 +145,11 @@ const SideBar = () => {
             break;
             case "Edit Account":
                 console.log(`Go to edit account page`);
-                setEdit(!edit)
+            //    const promise = new Promise((resolve, reject) => {
+            //         resolve(props.setEditAccountInfo());
+            //         }).then((data) => {
+            //         setEdit(data);
+            //         })
             break;
             case "Send Message":
                 console.log("Go to send message page");
@@ -176,6 +181,10 @@ const SideBar = () => {
                 return(null);
         }
     };
+
+    const renderEditAccountForm = (event) => {
+        console.log('Rendering edit account form ', event);
+    }
 
 
     return(
@@ -282,9 +291,10 @@ const SideBar = () => {
                         </Grid>
                     </Container>
                     {redirect ? <Navigate to='/' replace={true} /> : null}
+                    {edit ? <Navigate to={`/edit/${user.userInfo.id}`} replace={true} /> : null}
                 </Box>
             </Box>
-                    </ThemeProvider>
+        </ThemeProvider>
     )
 };
 

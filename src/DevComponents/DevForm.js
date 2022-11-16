@@ -14,13 +14,27 @@ export default class DevForm extends React.Component {
     constructor(props){
         super(props);
         this.form = React.createRef();
-        //console.log(props);
+        const userInfo = this.props.user.userInfo;
         this.state ={ 
+            ...this.props,
             emailForm: this.props.emailForm,
             logInForm: this.props.logInForm,
             signUpForm: this.props.signUpForm,
+            editAccount: this.props.editAccountForm,
+            defaultValue: {
+                first: userInfo.first || "",
+                last: userInfo.last || "",
+                email: userInfo.email || "",
+                password: userInfo.password || "",
+                confirmPassword: userInfo.password || ""
+            }
         };
+
     };
+
+    // componentDidMount(){
+    //     console.log(this.state);
+    // }
 
     renderTitle(){
         switch(true){
@@ -30,6 +44,8 @@ export default class DevForm extends React.Component {
                 return "Log In";
             case this.state.signUpForm:
                 return "Create an Account";
+            case this.state.editAccountForm:
+                return "Edit Your Information"
             default:
                 console.log("404: title not found");
         }
@@ -48,10 +64,11 @@ export default class DevForm extends React.Component {
                                     <Stack spacing={2} direction='column' sx={{p: 5}}>
                                         <Typography align="center" gutterBottom variant="h4" component="div">{this.renderTitle()}</Typography>
                                         {this.state.logInForm ? <Button variant='text'onClick={this.props.handleCreateAccountRender}>Create an Account</Button> : null}
-                                        {this.state.signUpForm ? <Button variant='text'onClick={this.props.handleLogInRenderClick}>Log In</Button> : null}
-                                        {this.state.emailForm || this.state.signUpForm ? 
+                                        {this.state.signUpForm && !this.state.editAccountForm ? <Button variant='text'onClick={this.props.handleLogInRenderClick}>Log In</Button> : null}
+                                        {this.state.emailForm || this.state.signUpForm || this.state.editAccountForm ? 
                                             [
                                                <TextField  
+                                                            defaultValue={this.state.defaultValue.first}
                                                             key={1}
                                                             error={error.first[0]} 
                                                             id="outlined-basic 1" 
@@ -99,7 +116,7 @@ export default class DevForm extends React.Component {
                                                     pattern="\S+"
                                                     required/> : null
                                         }
-                                        {this.props.signUpForm || this.props.logInForm ? 
+                                        {this.props.signUpForm || this.props.logInForm || this.props.editAccountForm ? 
                                                 <TextField  
                                                 key={5}
                                                 error={error.password[0]} 
@@ -113,7 +130,7 @@ export default class DevForm extends React.Component {
                                                 pattern="\S+"
                                                 required/> : null 
                                         }
-                                        {this.props.signUpForm ? 
+                                        {this.props.signUpForm || this.props.editAccountForm ? 
                                                 <TextField
                                                 error={error.confirmPassword[0]} 
                                                 id="outlined-basic 5" 

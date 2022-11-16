@@ -92,7 +92,8 @@ const initialState = {
                     }, 
         renderForm: {
                     logIn: false, 
-                    createAccount: false
+                    createAccount: false,
+                    editAccount: false
                     }
 };
 
@@ -129,6 +130,9 @@ const userSlice = createSlice({
         },
         logOut: (state, action) => {
             return initialState;
+        },
+        editAccountFormReducer: (state, action) => {
+            state.renderForm.editAccount = !state.renderForm.editAccount
         }
     },
     extraReducers: {
@@ -176,5 +180,5 @@ const userSlice = createSlice({
 })
 
 
-export const {adminReducer, logInFormReducer, createAccountFormReducer, setState, logOut} = userSlice.actions;
+export const {adminReducer, logInFormReducer, createAccountFormReducer, setState, logOut, editAccountFormReducer} = userSlice.actions;
 export default userSlice.reducer;

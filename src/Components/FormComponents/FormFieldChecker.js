@@ -14,6 +14,7 @@ class FormFieldChecker extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            ...this.props,
             repeatFieldData: {
                 first: '',
                 last: '',
@@ -35,6 +36,7 @@ class FormFieldChecker extends React.Component{
             emailForm: this.props.emailForm,
             logInForm: this.props.logInForm,
             signUpForm: this.props.signUpForm,
+            editAccountForm: this.props.editAccountForm,
             checked: true,
         };
         this.handleFieldCheck = this.handleFieldCheck.bind(this);
@@ -65,7 +67,6 @@ class FormFieldChecker extends React.Component{
     };
 
     setFormData(event) {
-        // console.log(this.state.repeatFieldData);
         const {name, value} = event.target; 
         if(name.toString() === "message" || name.toString() === "password" || name.toString() === "confirmPassword"){
             this.setState((prevState) => ({
@@ -89,6 +90,7 @@ class FormFieldChecker extends React.Component{
             ...this.state.repeatFieldData,
             ...this.state.uniqueFieldData
         }
+        
         let trimmedFormData = {}
         for(let [key, value] of Object.entries(formData)){
             let newVal = value.trim();
@@ -107,7 +109,7 @@ class FormFieldChecker extends React.Component{
                 delete trimmedFormData.confirmPassword;
                 this.checkForBlanks(trimmedFormData, event);
             break;
-            case this.state.signUpForm:
+            case this.state.signUpForm || this.state.editAccountForm:
                 delete trimmedFormData.message;
                 this.checkForBlanks(trimmedFormData, event);
             break;
@@ -117,6 +119,12 @@ class FormFieldChecker extends React.Component{
     };
 
     checkForBlanks(formData, event){
+            for(let field of event.target){
+                if(field.value){
+                    formData[field.name] = field.value
+                }
+            }
+            console.log(formData);
             for(const [key, value] of Object.entries(formData)){
                 switch(true) {
                     case value === "" && key !== "email":

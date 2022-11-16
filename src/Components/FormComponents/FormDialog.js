@@ -37,15 +37,19 @@ const FormDialog = (props) => {
     const emailForm = useSelector(state => state.form.renderForm);
     const logInForm = useSelector(state => state.user.renderForm.logIn);
     const createAccount = useSelector(state => state.user.renderForm.createAccount);
+    const editAccount = useSelector(state => state.user.renderForm.editAccount)
     //const [error, setError] = useState(false);
     const formTypeValue = {
         emailForm: emailForm,
         logInForm: logInForm,
-        signUpForm: createAccount
+        signUpForm: createAccount,
+        editAccountForm: editAccount
    };
 
    useEffect(() => {
-    dispatch(getUserDataAsync());
+    if(!formTypeValue.editAccountForm){
+        dispatch(getUserDataAsync());
+    }
     }, [dispatch]);
 
     const dbStorage = (event, checked, formData) => {
@@ -97,6 +101,9 @@ const FormDialog = (props) => {
                     }
                 });
             break;
+            case editAccount:
+                console.log('Edit account to db');
+            break;
             default:
                 console.log("something went wrong with dbStorage swtich");
         }
@@ -134,19 +141,20 @@ const FormDialog = (props) => {
         return(
             <div className='dialog-container'>
                 <Dialog
-                    open={props.form.renderForm || props.user.renderForm.logIn || props.user.renderForm.createAccount}
+                    open={props.form.renderForm || props.user.renderForm.logIn || props.user.renderForm.createAccount || props.user.renderForm.editAccount}
                     onClose={props.handleFormClose}
                     aria-labelledby='alert-dialog-title'
                     aria-describedby='alert-dialog-description'
                     fullWidth
                 >
-                    {props.form.renderForm || props.user.renderForm.logIn || props.user.renderForm.createAccount ? 
+                    {props.form.renderForm || props.user.renderForm.logIn || props.user.renderForm.createAccount || props.user.renderForm.editAccount ? 
                                                         <FormFieldChecker
                                                             handleCreateAccountRender={props.handleCreateAccountRender}
                                                             handleLogInRenderClick={props.handleLogInRenderClick}
                                                             emailForm={formTypeValue.emailForm} 
                                                             logInForm={formTypeValue.logInForm}
-                                                            signUpForm={formTypeValue.signUpForm} 
+                                                            signUpForm={formTypeValue.signUpForm}
+                                                            editAccountForm={formTypeValue.editAccountForm}
                                                             successToast={props.successToast}
                                                             sendEmail = {sendEmail}
                                                             dbStorage={dbStorage} 

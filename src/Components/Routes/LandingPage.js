@@ -1,6 +1,6 @@
 
 //Libraries imports
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Element, Events, scroller, animateScroll as scroll } from 'react-scroll';
 import NavBar from '../NavBar';
@@ -22,7 +22,7 @@ import SectionFour from './Elements/SectionFour';
 const stateToProps = (state) => {
     return state;
 }
-const LandingPage = (props) => {
+const LandingPage = (props, ref) => {
     const dispatch = useDispatch();
 
     const handleFormClick = (event) => {
@@ -32,11 +32,9 @@ const LandingPage = (props) => {
 
     const handleLogOutClick = (event) => {
         console.log('Log Out Button Clicked!');
-    
         dispatch(logOut());
 
-    }
-
+    };
     const handleLogInRenderClick = (event) => {
         if(props.user.renderForm.createAccount){
             dispatch(logInFormReducer());
@@ -46,8 +44,7 @@ const LandingPage = (props) => {
         }
     }
 
-    const handleCreateAccountRender = (event) =>{
-        console.log(props.user.renderForm.logIn)
+    const handleCreateAccountRender = (event) => {
         if(props.user.renderForm.logIn){
             dispatch(createAccountFormReducer())
             dispatch(logInFormReducer())
