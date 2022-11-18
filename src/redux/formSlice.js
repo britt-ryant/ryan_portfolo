@@ -56,11 +56,15 @@ const formSlice = createSlice({
             //state.submitted = action.payload.submitted
         },
         renderReducer: (state, action) => {
-            state.renderForm = !state.renderForm;
-            // return state.renderForm
+           state.renderForm = !state.renderForm;
+
         },
         setMessageState: (state, action) => {
             state.data = action.payload
+        },
+        setStateUponFormSubmit: (state, action) => {
+            console.log(`seeting email form state`);
+            state.renderForm = false
         }
     }, 
     extraReducers: {

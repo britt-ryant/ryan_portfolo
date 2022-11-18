@@ -47,18 +47,13 @@ class AccountInfo extends React.Component{
         this.setState({showPassword: !this.state.showPassword})
     }
     editAccount(){
-        console.log('edit Account');
         const { dispatch } = this.props;
         dispatch(editAccountFormReducer())
     }
 
     handleFormClose(){
-        console.log('form close');
         const { dispatch } = this.props;
         dispatch(editAccountFormReducer());
-    }
-    successToast(){
-        console.log('success toast');
     }
     handleCreateAccountRender(){
         console.log('create account render');
@@ -72,11 +67,6 @@ class AccountInfo extends React.Component{
         const editForm = this.props.user.renderForm.editAccount;
         return(
             <div>
-
-            <Toaster 
-            position='top-left'
-            reverseOrder={true}
-             />
             <Paper sx={{
                         width: ['90%', '50%', '50%'],
                         minWidth: '50%', 
@@ -157,9 +147,8 @@ class AccountInfo extends React.Component{
                             <EditIcon />
                         </IconButton>
                         {this.props.user.renderForm.editAccount ? <FormDialog
-                                                                        editForm={true}
                                                                         handleFormClose={this.handleFormClose} 
-                                                                        successToast={this.successToast} 
+                                                                        successToast={this.props.successToast} 
                                                                          /> : null}
                 </Stack>
             </Paper>

@@ -80,6 +80,7 @@ export default class DevForm extends React.Component {
                                                             pattern="\S(.*\S)?"
                                                             required/>,
                                                 <TextField  
+                                                            defaultValue={this.state.defaultValue.last}
                                                             key={2}
                                                             error={error.last[0]} 
                                                             id="outlined-basic 2" 
@@ -91,6 +92,7 @@ export default class DevForm extends React.Component {
                                                             required/>
                                             ]: null}
                                         <TextField  
+                                                    defaultValue={this.state.defaultValue.email}
                                                     key={3}
                                                     error={error.email[0]} 
                                                     id="outlined-basic 3" 
@@ -117,7 +119,8 @@ export default class DevForm extends React.Component {
                                                     required/> : null
                                         }
                                         {this.props.signUpForm || this.props.logInForm || this.props.editAccountForm ? 
-                                                <TextField  
+                                                <TextField
+                                                defaultValue={this.state.defaultValue.password}  
                                                 key={5}
                                                 error={error.password[0]} 
                                                 id="outlined-basic 4" 
@@ -132,6 +135,7 @@ export default class DevForm extends React.Component {
                                         }
                                         {this.props.signUpForm || this.props.editAccountForm ? 
                                                 <TextField
+                                                defaultValue={this.state.defaultValue.password}
                                                 error={error.confirmPassword[0]} 
                                                 id="outlined-basic 5" 
                                                 label="Confirm Password" 

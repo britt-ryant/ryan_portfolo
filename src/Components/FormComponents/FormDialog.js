@@ -8,7 +8,7 @@ import Dialog from '@mui/material/Dialog';
 
 //import redux components
 import { createUserAsync, getUserDataAsync, setState } from '../../redux/userSlice';
-import { addInfoAsync, setMessageState } from '../../redux/formSlice';
+import { addInfoAsync, renderReducer, setMessageState } from '../../redux/formSlice';
 
 //imoprt emailjs --> email service
 import emailjs from '@emailjs/browser';
@@ -18,7 +18,7 @@ import FormFieldChecker from './FormFieldChecker';
 
 //Dev Components
 import DevForm from '../../DevComponents/DevForm';
-import { create } from '@mui/material/styles/createTransitions';
+import { create, duration } from '@mui/material/styles/createTransitions';
 
 //.env global variables
 const serviceId = process.env.REACT_APP_SERVICE_ID
@@ -47,7 +47,7 @@ const FormDialog = (props) => {
    };
 
    useEffect(() => {
-    if(!formTypeValue.editAccountForm){
+    if(!formTypeValue.editAccountForm && !formTypeValue.emailForm){
         dispatch(getUserDataAsync());
     }
     }, [dispatch]);
@@ -58,10 +58,15 @@ const FormDialog = (props) => {
                 console.log("dbStorage, message form");
                 switch(checked){
                     case true:
-                        dispatch(addInfoAsync(formData));
+                        dispatch(addInfoAsync(formData)).then((data) => {
+                            dispatch(renderReducer());
+                            callSuccessToast(`Message sent successfully!`)
+                        });
                     break;
                     case false: 
                         dispatch(setMessageState(formData));
+                        dispatch(renderReducer())
+                        
                     break;
                     default: 
                         console.log("Something went wrong with the checkbox switch");
@@ -85,14 +90,12 @@ const FormDialog = (props) => {
             case createAccount:
                 console.log("dbStorage, create account");
                 dispatch(getUserDataAsync(formData)).then((data) => {
-                    console.log(data);
-                    console.log(data.payload.userInfo);
                     if(data.payload.userInfo.result.length === 0){
                         //dispatch create user
                         console.log("dispatching create user");
                         dispatch(createUserAsync(formData)).then((data) => {
                             let userData = data.payload.newUser;
-                            props.successToast(event);
+                            callSuccessToast(`Welcome ${formData.first} ${formData.last}!`)
                             dispatch(setState(userData));
                         });
                     } else {
@@ -103,6 +106,7 @@ const FormDialog = (props) => {
             break;
             case editAccount:
                 console.log('Edit account to db');
+                
             break;
             default:
                 console.log("something went wrong with dbStorage swtich");
@@ -113,6 +117,13 @@ const FormDialog = (props) => {
         dispatch(getUserDataAsync(formData));
         //check to see if the state changes after get async and if it does add toast
     };
+
+    const callSuccessToast = (message) => {
+        toast.success(message, {
+            duration: 
+                5000
+            })
+    }
 
     
     //******************** Handling emails sending **********************************/

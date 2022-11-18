@@ -74,14 +74,16 @@ const LandingPage = (props, ref) => {
                 console.log('oops something went wrong, setting all to false');
         }
     }
+
+    //**************** Trying to get rid of this!********************/
     const successToast = (event) => {
         event.preventDefault();
-        console.log('clicked from the form page on the landing page');
         toast.success("Dev email requst sent successfully!", {
             duration: 5000,
         })
         handleFormClose(event);
     }
+    //**************** Trying to get rid of this! *********************/
     return(
         <div className='landing-page-container'>
              <Toaster 

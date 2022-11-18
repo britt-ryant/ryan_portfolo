@@ -57,13 +57,15 @@ class FormFieldChecker extends React.Component{
     };
 
     setError(errorInfo, error) {
-        let title = this.state.fieldError[errorInfo][1];
-        this.setState((prevState) => ({
-            fieldError: {
-                ...prevState.fieldError,
-               [errorInfo]: [error, title] 
-            }
-        }))
+        if(errorInfo !== "checkbox"){
+            let title = this.state.fieldError[errorInfo][1];
+            this.setState((prevState) => ({
+                fieldError: {
+                    ...prevState.fieldError,
+                   [errorInfo]: [error, title] 
+                }
+            }))
+        }
     };
 
     setFormData(event) {
@@ -119,12 +121,11 @@ class FormFieldChecker extends React.Component{
     };
 
     checkForBlanks(formData, event){
-            for(let field of event.target){
-                if(field.value){
-                    formData[field.name] = field.value
-                }
+        for(let field of event.target){
+            if(field.value && field.name !== "" ){
+                formData[field.name] = field.value
             }
-            console.log(formData);
+        }
             for(const [key, value] of Object.entries(formData)){
                 switch(true) {
                     case value === "" && key !== "email":
@@ -151,7 +152,7 @@ class FormFieldChecker extends React.Component{
             case this.state.logInForm:
                 this.props.dbStorage(event, this.state.checked, formData);
             break;
-            case this.state.signUpForm:
+            case this.state.signUpForm || this.state.editAccountForm:
                 let pattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).+$");
                 if(pattern.test(password)){
                     if(formData.confirmPassword === formData.password){
@@ -173,8 +174,10 @@ class FormFieldChecker extends React.Component{
     }
 
     finalValidation(event, formData){
+        console.log('infinal');
         if(Object.values(formData).every(entry => entry !== "") && event.currentTarget.email.checkValidity()){
-            this.devEmail(event);
+            //this.devEmail(event);
+            this.successRouter(event)
             this.props.dbStorage(event, this.state.checked, formData);
             //commented out during DEV MAKE SURE TO RECONNECT EMAILJS!!!!
             //this.state.emailForm ? this.props.sendEmail(event, formData) : console.log("SOMETHING ELSE WAS REDIRECTED TO WRONG FUNCTION");
@@ -182,8 +185,6 @@ class FormFieldChecker extends React.Component{
     };
 
     fireToDb(event){
-        console.log(event);
-        this.devEmail(event);
         this.props.dbStorage(event, this.state.checked);
     }
 
@@ -200,15 +201,13 @@ class FormFieldChecker extends React.Component{
         toast.error(`Please make sure ${this.state.fieldError[key][1]} field is filled out correctly!`);
     };
 
+    successRouter(event){
+        console.log("Success");
+    }
+
     handleCheckbox(event) {
         event.target.checked ? this.setState({checked: true}) : this.setState({checked: false});
     };
-
-    //**********************DEV FUNCTION *********************/
-    devEmail(event) {
-        this.props.successToast(event);
-    }
-    //**********************DEV FUNCTION *********************/
 
 
 

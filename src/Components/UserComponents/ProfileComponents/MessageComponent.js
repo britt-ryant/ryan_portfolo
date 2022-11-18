@@ -1,8 +1,8 @@
 import React from 'react';
 
 //import redux components
-import { connect } from 'react-redux';
-import { getMessagesByUserAsync } from '../../../redux/formSlice';
+import { connect, useDispatch } from 'react-redux';
+import { getMessagesByUserAsync, renderReducer } from '../../../redux/formSlice';
 
 //import mui components
 import {
@@ -17,7 +17,11 @@ import {
     TableCell,
     TableBody,
     withStyles
-} from '@mui/material';
+        } from '@mui/material';
+
+//import components
+import FormDialog from '../../FormComponents/FormDialog';
+import toast from 'react-hot-toast';
 
 
 
@@ -30,6 +34,7 @@ class MessageComponent extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            ...this.props,
             loading: true,
             startIndex: 0,
             cutOff: 5,
@@ -37,13 +42,13 @@ class MessageComponent extends React.Component{
         }
         this.addMoreMessages = this.addMoreMessages.bind(this);
         this.hideMessages = this.hideMessages.bind(this);
+        this.handleFormClose = this.handleFormClose.bind(this);
     }
     componentDidMount(){
         const { dispatch } = this.props;
         let email = this.props.user.userInfo.email;
         dispatch(getMessagesByUserAsync(email))
         .then((data) => {
-            console.log(`calling dispatch`);
             if(data.payload.error){
                 this.setState({
                     loading: false,
@@ -70,6 +75,46 @@ class MessageComponent extends React.Component{
                   }
             }
         })
+    };
+    componentDidUpdate(prevProps, prevState){
+       if(prevProps.form.data !== this.props.form.data){
+            console.log(this.state);
+            if(this.state.renderMessages){
+                if(this.state.startIndex === 0 && this.state.cutOff === 5){
+                    let oldMessages = this.state.renderMessages.filter((value, i) => i !== 4);
+                    this.setState({
+                        renderMessages: [
+                            this.props.form.data,
+                            ...oldMessages
+                        ],
+                        hideButton: false,
+                        messages: [
+                            this.props.form.data,
+                            ...this.state.messages
+                        ]
+                    })
+                } else {
+                    this.setState({
+                        renderMessages: [
+                            this.props.form.data,
+                            ...this.state.renderMessages
+                        ],
+                        hideButton: false,
+                        messages: [
+                            this.props.form.data,
+                            ...this.state.messages
+                        ]
+                    })
+                }
+            } else {
+                console.log("rendering the first message");
+                this.setState({
+                    renderMessages: [this.props.form.data],
+                    messages: [this.props.form.data],
+                    error: false
+                })
+            }
+        }
     }
 
     addMoreMessages(){
@@ -105,8 +150,58 @@ class MessageComponent extends React.Component{
             renderMessages: this.state.messages.slice(0, 5),
             hideButton: false
         })
+    };
+
+    handleFormClose(){
+        const {dispatch} = this.props;
+        dispatch(renderReducer());
+    }
+
+    renderItems(message){
+        console.log(message.length);
+        console.log(message);
+        switch(message.length){
+            // case 0:
+            //     console.log("nothing to show");
+            // break;
+            case 1: 
+            console.log("there is only one message");
+            const newDate = new Date(message[0].timestamp.slice(0, -1));
+            const date = newDate.toString().slice(0, 15);
+            const time = newDate.toLocaleTimeString();
+            return(
+                <React.Fragment>
+                    <TableRow key={45}>
+                        <TableCell sx={{width: 150}}>{time}</TableCell>
+                        <TableCell sx={{width: 200}}>{date}</TableCell>
+                       <TableCell>{message[0].message}</TableCell>
+                    </TableRow>
+                </React.Fragment>
+            )
+            default:
+                console.log(this.state);
+                return message.map((item, key) => {
+                    const newDate = new Date(item.timestamp.slice(0, -1));
+                    const date = newDate.toString().slice(0, 15);
+                    const time = newDate.toLocaleTimeString();
+                    return(
+                        <React.Fragment>
+                            <TableRow key={item.id} >
+                                <TableCell sx={{width: 150}}>{time}</TableCell>
+                                <TableCell sx={{width: 200}}>{date}</TableCell>
+                                <TableCell>{item.message}</TableCell>
+                            </TableRow>
+                        </React.Fragment>
+                    )
+                })
+        }
     }
     render(){
+        if(this.state.renderMessages){
+            console.log(this.state);
+
+        }
+
         return(
             <Paper 
                 sx={{
@@ -145,27 +240,16 @@ class MessageComponent extends React.Component{
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {!this.state.loading && !this.state.error && this.state.renderMessages? this.state.renderMessages.map((message, key) => {
-                            const newDate = new Date(message.timestamp.slice(0, -1));
-                            const date = newDate.toString().slice(0, 15);
-                            const time = newDate.toLocaleTimeString();
-                            return(
-                                <TableRow key={message.id} >
-                                    <TableCell sx={{width: 150}}>{time}</TableCell>
-                                    <TableCell sx={{width: 200}}>{date}</TableCell>
-                                    <TableCell>{message.message}</TableCell>
-                                </TableRow>
-                            )
-                        }): null}
+                        {!this.state.loading && !this.state.error && this.state.renderMessages ? this.renderItems(this.state.renderMessages) : null}
                         {this.state.loading ? 
-                        <TableRow>
+                        <TableRow key={46}>
                             <TableCell colSpan={3}>
                             Loading...
                             </TableCell>
                         </TableRow> 
                             : null}
                         {!this.state.loading && this.state.error ? 
-                            <TableRow>
+                            <TableRow key={47}>
                                 <TableCell colSpan={3}>
                                 {this.state.error}
                                 </TableCell>
@@ -176,7 +260,12 @@ class MessageComponent extends React.Component{
                 {!this.state.hideButton ? <Button varitant="text" sx={{justifyContent: 'left', paddingTop:2}} onClick={this.addMoreMessages}>
                     See More
                 </Button> : null}
-                {this.state.hideButton && !this.state.error? <Button variant='text'sx={{justifyContent: 'left', paddingTop:2}} onClick={this.hideMessages}>Hide</Button> : null}
+                {this.state.hideButton && !this.state.error? 
+                <Button variant='text'sx={{justifyContent: 'left', paddingTop:2}} onClick={this.hideMessages}>Hide</Button> : null}
+                 {this.props.form.renderForm ? <FormDialog
+                                                                        handleFormClose={this.handleFormClose} 
+                                                                        successToast={this.props.successToast} 
+                                                                         /> : null}
             </Paper>
         )
     }

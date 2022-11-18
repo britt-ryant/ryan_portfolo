@@ -1,7 +1,10 @@
 import React from 'react';
 
 //import redux components
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
+//import react-hot-toast
+import {Toaster} from 'react-hot-toast';
 
 //import MUI components
 import { 
@@ -40,6 +43,8 @@ import MessageComponent from './ProfileComponents/MessageComponent';
 //import react-router-dom components
 import { Navigate } from 'react-router-dom';
 import FormDialog from '../FormComponents/FormDialog';
+import { editAccountFormReducer } from '../../redux/userSlice';
+import {renderReducer} from '../../redux/formSlice';
 
 const darkTheme = createTheme({
     palette: {
@@ -122,7 +127,9 @@ const AppBar = styled(MuiAppBar, {
 
 
 const SideBar = (props) => {
+    const dispatch = useDispatch();
     const user = useSelector(state => state.user);
+    const form = useSelector(state => state.form);
     const initials = `${user.userInfo.first.charAt(0).toUpperCase()}${user.userInfo.last.charAt(0).toUpperCase()}`;
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -139,20 +146,16 @@ const SideBar = (props) => {
     };
 
     const handleClick = (button) => {
+        console.log("clicked", button);
         switch(button){
             case "Home":
                 setRedirect(true);
             break;
             case "Edit Account":
-                console.log(`Go to edit account page`);
-            //    const promise = new Promise((resolve, reject) => {
-            //         resolve(props.setEditAccountInfo());
-            //         }).then((data) => {
-            //         setEdit(data);
-            //         })
+                dispatch(editAccountFormReducer());
             break;
             case "Send Message":
-                console.log("Go to send message page");
+                dispatch(renderReducer())
             break;
             case "Light Mode": 
                 setMode("Dark Mode");
@@ -182,52 +185,80 @@ const SideBar = (props) => {
         }
     };
 
-    const renderEditAccountForm = (event) => {
-        console.log('Rendering edit account form ', event);
+    const successToast = () => {
+        console.log("success Toast Sidebar");
     }
 
 
     return(
-        <ThemeProvider theme={mode === "Dark Mode" ? darkTheme : lightTheme}>
-        <CssBaseline />
-            <Box sx={{ display: 'flex'}}>
-                <CssBaseline />
-                <AppBar position="fixed" open={open} style={{background: alpha('#031D40', 1)}}>
-                    <Toolbar>
-                        <IconButton 
-                            color="inherit"
-                            aria-label='open drawer'
-                            onClick={handleDrawerOpen}
-                            edge="start"
-                            sx={{
-                                marginRight: 5, 
-                                ...(open && {display: 'none'}),
-                            }}
-                        >
-                        <MenuIcon />
-                        </IconButton>
-                        <Avatar >{initials}</Avatar>
-                        <Typography variant='h6' noWrap component="div" sx={{p: 2}}>
-                            {user.userInfo.first} {user.userInfo.last}
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-                <Drawer variant="permanent" open={open}>
-                    <DrawerHeader>
-                        <IconButton onClick={handleDrawerClose}>
-                            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                        </IconButton>
-                    </DrawerHeader>
-                    <Divider />
-                    <Stack>
-                        <ListItem key="mode" disablePadding sx={{ display: 'block'}}>
-                                <ListItemButton
+        <div>
+            <Toaster 
+                position='top-left'
+                reverseOrder={true}
+                />
+            <ThemeProvider theme={mode === "Dark Mode" ? darkTheme : lightTheme}>
+            <CssBaseline />
+                <Box sx={{ display: 'flex'}}>
+                    <CssBaseline />
+                    <AppBar position="fixed" open={open} style={{background: alpha('#031D40', 1)}}>
+                        <Toolbar>
+                            <IconButton 
+                                color="inherit"
+                                aria-label='open drawer'
+                                onClick={handleDrawerOpen}
+                                edge="start"
+                                sx={{
+                                    marginRight: 5, 
+                                    ...(open && {display: 'none'}),
+                                }}
+                            >
+                            <MenuIcon />
+                            </IconButton>
+                            <Avatar >{initials}</Avatar>
+                            <Typography variant='h6' noWrap component="div" sx={{p: 2}}>
+                                {user.userInfo.first} {user.userInfo.last}
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Drawer variant="permanent" open={open}>
+                        <DrawerHeader>
+                            <IconButton onClick={handleDrawerClose}>
+                                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                            </IconButton>
+                        </DrawerHeader>
+                        <Divider />
+                        <Stack>
+                            <ListItem key="mode" disablePadding sx={{ display: 'block'}}>
+                                    <ListItemButton
+                                            sx={{
+                                                minHeight: 48,
+                                                justifyContent: open ? 'initial': 'center',
+                                                px: 2.5,
+                                            }}
+                                            onClick={() => handleClick(mode)}
+                                        >
+                                            <ListItemIcon
+                                                sx={{
+                                                    minWidth: 0,
+                                                    mr: open ? 3 : 'auto',
+                                                    justifyContent: 'center'
+                                                }}
+                                            >
+                                                {iconSelector(mode)}
+                                            </ListItemIcon>
+                                            <ListItemText primary={mode === "Light Mode"? "Dark Mode" : "Light Mode"} sx={{opacity: open ? 1 : 0}} />
+                                    </ListItemButton>
+                                </ListItem>
+                            <Divider />
+                            {['Home', 'Edit Account', 'Send Message'].map((text, index) => (
+                                <ListItem key={text} disablePadding sx={{ display: 'block'}}>
+                                    <ListItemButton
                                         sx={{
                                             minHeight: 48,
                                             justifyContent: open ? 'initial': 'center',
                                             px: 2.5,
                                         }}
-                                        onClick={() => handleClick(mode)}
+                                        onClick={() => handleClick(text)}
                                     >
                                         <ListItemIcon
                                             sx={{
@@ -236,65 +267,46 @@ const SideBar = (props) => {
                                                 justifyContent: 'center'
                                             }}
                                         >
-                                            {iconSelector(mode)}
+                                            {iconSelector(text)}
                                         </ListItemIcon>
-                                        <ListItemText primary={mode === "Light Mode"? "Dark Mode" : "Light Mode"} sx={{opacity: open ? 1 : 0}} />
+                                        <ListItemText primary={text} sx={{opacity: open ? 1 : 0}} />
                                 </ListItemButton>
-                            </ListItem>
-                        <Divider />
-                        {['Home', 'Edit Account', 'Send Message'].map((text, index) => (
-                            <ListItem key={text} disablePadding sx={{ display: 'block'}}>
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 48,
-                                        justifyContent: open ? 'initial': 'center',
-                                        px: 2.5,
-                                    }}
-                                    onClick={() => handleClick(text)}
-                                >
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: open ? 3 : 'auto',
-                                            justifyContent: 'center'
-                                        }}
-                                    >
-                                        {iconSelector(text)}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} sx={{opacity: open ? 1 : 0}} />
-                            </ListItemButton>
-                            </ListItem>
-                        ))}
+                                </ListItem>
+                            ))}
 
-                    </Stack>
-                    <Divider />
-                </Drawer>
-                <Box component="main" 
-                    sx={{ 
-                        backgroundColor: (theme) => 
-                            theme.palette.mode === 'light'
-                            ? theme.palette.grey[100]
-                            : theme.palette.grey[700],
-                        flexGrow: 1, 
-                        p: 3,
-                        justifyContent: "left",
-                        width: '100vw',
-                        height: '100vh'
-                    }}>
-                    <DrawerHeader theme={darkTheme}/>
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4, marginLeft: 1}}>
-                        <Grid container spacing={3} >
-                            <Grid item xs={12} md={8} lg={9}>
-                                <AccountInfo renderEdit={edit}/>
-                                <MessageComponent />
+                        </Stack>
+                        <Divider />
+                    </Drawer>
+                    <Box component="main" 
+                        sx={{ 
+                            backgroundColor: (theme) => 
+                                theme.palette.mode === 'light'
+                                ? theme.palette.grey[100]
+                                : theme.palette.grey[700],
+                            flexGrow: 1, 
+                            p: 3,
+                            justifyContent: "left",
+                            width: '100vw',
+                            height: '100vh'
+                        }}>
+                        <DrawerHeader theme={darkTheme}/>
+                        <Container maxWidth="lg" sx={{ mt: 4, mb: 4, marginLeft: 1}}>
+                            <Grid container spacing={3} >
+                                <Grid item xs={12} md={8} lg={9}>
+                                    <AccountInfo 
+                                                successToast={successToast}
+                                                renderEdit={edit}/>
+                                    <MessageComponent 
+                                                successToast={successToast}
+                                                />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Container>
-                    {redirect ? <Navigate to='/' replace={true} /> : null}
-                    {edit ? <Navigate to={`/edit/${user.userInfo.id}`} replace={true} /> : null}
+                        </Container>
+                        {redirect ? <Navigate to='/' replace={true} /> : null}
+                    </Box>
                 </Box>
-            </Box>
-        </ThemeProvider>
+            </ThemeProvider>
+        </div>
     )
 };
 
