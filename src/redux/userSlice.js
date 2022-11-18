@@ -24,9 +24,10 @@ export const getUserByIdAsync = createAsyncThunk(
     '/user/getUserByIdAsync', 
     async(payload) => {
         let id = payload.id;
-        const response = await fetch(`http://localhost/user/get/${id}`)
+        const response = await fetch(`http://localhost:5000/user/get/${id}`)
         if(response.ok){
             let userInfo = await response.json();
+            console.log(userInfo);
             return {userInfo}
         }
     }
@@ -78,6 +79,28 @@ export const createUserAsync = createAsyncThunk(
         }
     }
 );
+
+export const updateUserAsync = createAsyncThunk(
+    '/user/updateUserAsync',
+    async(payload) => {
+        const response = await fetch(`http://localhost:5000/user/${payload.user.id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                                user: payload.user,
+                                formData: payload.formData,
+                            })
+        })
+            if(response.ok){
+                const result = await response.json();
+                return{ result };
+            }
+        }
+)
+
 
 const initialState = { 
         admin: false,
@@ -174,6 +197,20 @@ const userSlice = createSlice({
         [updateUserPasswordAsync.fulfilled]: (state, action) => {
             console.log("password updated!");
             return action.userInfo
+        },
+        [updateUserAsync.pending]: (state, action) => {
+            console.log("Updating user info");
+        }, 
+        [updateUserAsync.fulfilled]: (state, action) => {
+            let currentState = current(state);
+            let updateState = new Promise((resolve, reject) => {
+                resolve(state.userInfo = {
+                                            admin: currentState.admin,
+                                            ...action.payload.result
+                })
+            }).then((data) => {
+                return data
+            })
         }
     }
 

@@ -158,12 +158,7 @@ class MessageComponent extends React.Component{
     }
 
     renderItems(message){
-        console.log(message.length);
-        console.log(message);
         switch(message.length){
-            // case 0:
-            //     console.log("nothing to show");
-            // break;
             case 1: 
             console.log("there is only one message");
             const newDate = new Date(message[0].timestamp.slice(0, -1));
@@ -179,7 +174,6 @@ class MessageComponent extends React.Component{
                 </React.Fragment>
             )
             default:
-                console.log(this.state);
                 return message.map((item, key) => {
                     const newDate = new Date(item.timestamp.slice(0, -1));
                     const date = newDate.toString().slice(0, 15);
@@ -197,11 +191,6 @@ class MessageComponent extends React.Component{
         }
     }
     render(){
-        if(this.state.renderMessages){
-            console.log(this.state);
-
-        }
-
         return(
             <Paper 
                 sx={{

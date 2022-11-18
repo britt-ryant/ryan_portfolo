@@ -147,6 +147,37 @@ app.put('/user/put/:id', (req, res) => {
             res.send(updatedUser);
         })
     })
+});
+
+//add PUT method to update user info
+
+app.put('/user/:id', (req, res) => {
+    const {id} = req.params;
+    const oEmail = req.body.user.email;
+    // const {first, last, email, password} = req.body.user
+    const {first, last, email, password} = req.body.formData;
+    console.log(id, first, last, email, password);
+    console.log( oEmail);
+    bcrypt.hash(password, saltRounds).then((hashedPassword) => {
+        const dbQuery = `UPDATE user_db as u, info_db as i 
+                            SET u.first=?, i.first=?, u.last=?, i.last=?, u.email=?, i.email=?, u.password=? 
+                            WHERE u.email=? 
+                            AND u.email=i.email`
+        db.query(dbQuery, [first, first, last, last, email, email, hashedPassword, oEmail], (error, result) => {
+            if(error){
+                console.log(error);
+            }
+            const updatedInfo = {
+                                    id: id,
+                                    first: first,
+                                    last: last,
+                                    email: email,
+                                    password: password
+            }
+            res.send(updatedInfo);
+        })
+    })
+
 })
 
 

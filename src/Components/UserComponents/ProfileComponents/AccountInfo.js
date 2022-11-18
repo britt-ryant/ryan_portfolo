@@ -37,6 +37,14 @@ class AccountInfo extends React.Component{
         this.handleFormClose = this.handleFormClose.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState){
+       if(prevProps.user.userInfo !== this.props.user.userInfo){
+            let user = {...this.state.user}
+            user.userInfo = this.props.user.userInfo;
+            this.setState({user})
+       }
+    }
+
     properCaps(string){
         let word = string[0].toUpperCase();
         word += string.slice(1).toLowerCase();
@@ -50,13 +58,9 @@ class AccountInfo extends React.Component{
         const { dispatch } = this.props;
         dispatch(editAccountFormReducer())
     }
-
     handleFormClose(){
         const { dispatch } = this.props;
         dispatch(editAccountFormReducer());
-    }
-    handleCreateAccountRender(){
-        console.log('create account render');
     }
     render(){
         const user = this.state.user.userInfo;

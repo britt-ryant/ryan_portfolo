@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import Dialog from '@mui/material/Dialog';
 
 //import redux components
-import { createUserAsync, getUserDataAsync, setState } from '../../redux/userSlice';
+import { createUserAsync, editAccountFormReducer, getUserDataAsync, setState, updateUserAsync } from '../../redux/userSlice';
 import { addInfoAsync, renderReducer, setMessageState } from '../../redux/formSlice';
 
 //imoprt emailjs --> email service
@@ -83,7 +83,7 @@ const FormDialog = (props) => {
                             password: formData.password
                         };
                         dispatch(setState(userInfo));
-                        toast.success(`Welcome back ${userInfo.first} ${userInfo.last}!`);
+                        callSuccessToast(`Welcome back ${userInfo.first} ${userInfo.last}!`);
                     }
                 })
             break;
@@ -106,6 +106,16 @@ const FormDialog = (props) => {
             break;
             case editAccount:
                 console.log('Edit account to db');
+                let info = {
+                    formData: formData,
+                    user: user
+                }
+                dispatch(updateUserAsync(info)).then((data) => {
+                    dispatch(editAccountFormReducer())
+                    callSuccessToast(`Your information has been changed ${data.payload.result.first}!`)
+                    
+                })
+                
                 
             break;
             default:
