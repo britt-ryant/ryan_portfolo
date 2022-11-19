@@ -113,7 +113,6 @@ const FormDialog = (props) => {
                 dispatch(updateUserAsync(info)).then((data) => {
                     dispatch(editAccountFormReducer())
                     callSuccessToast(`Your information has been changed ${data.payload.result.first}!`)
-                    
                 })
                 
                 

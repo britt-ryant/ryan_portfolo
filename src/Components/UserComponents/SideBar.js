@@ -137,6 +137,14 @@ const SideBar = (props) => {
     const [mode, setMode] = React.useState("Light Mode");
     const [edit, setEdit] = React.useState(false);
 
+    // React.useEffect(() => {
+    //     // console.log(user);
+    //     if(user.admin){
+    //         console.log(`Admin!`);
+    //     }
+    // }, [user])
+
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -185,9 +193,31 @@ const SideBar = (props) => {
         }
     };
 
-    const successToast = () => {
-        console.log("success Toast Sidebar");
+    const handleAdmin = () => {
+        //console.log(`Handling Admin`);
+        switch(true){
+            case user.admin:
+                //return console.log("admin render");
+                return(
+                    <React.Fragment>
+                        <AccountInfo renderEdit={edit} />
+                        <MessageComponent />
+                    </React.Fragment>
+                )
+            default: 
+                return(
+                    <React.Fragment>
+                        <AccountInfo    
+                                    renderEdit={edit} />
+                        <MessageComponent />
+                    </React.Fragment>
+                )
+        }
     }
+
+    // const successToast = () => {
+    //     console.log("success Toast Sidebar");
+    // }
 
 
     return(
@@ -216,7 +246,7 @@ const SideBar = (props) => {
                             </IconButton>
                             <Avatar >{initials}</Avatar>
                             <Typography variant='h6' noWrap component="div" sx={{p: 2}}>
-                                {user.userInfo.first} {user.userInfo.last}
+                                {user.userInfo.first} {user.userInfo.last} 
                             </Typography>
                         </Toolbar>
                     </AppBar>
@@ -293,13 +323,14 @@ const SideBar = (props) => {
                         <Container maxWidth="lg" sx={{ mt: 4, mb: 4, marginLeft: 1}}>
                             <Grid container spacing={3} >
                                 <Grid item xs={12} md={8} lg={9}>
-                                    <AccountInfo 
-                                                successToast={successToast}
+                                    {handleAdmin()}
+                                    {/* <AccountInfo 
+                                                // successToast={successToast}
                                                 renderEdit={edit}/>
                                     <MessageComponent 
-                                                successToast={successToast}
-                                                />
-                                </Grid>
+                                                // successToast={successToast}
+                                                />*/}
+                                </Grid> 
                             </Grid>
                         </Container>
                         {redirect ? <Navigate to='/' replace={true} /> : null}

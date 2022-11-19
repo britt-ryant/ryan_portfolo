@@ -30,6 +30,23 @@ app.get('/apple/pie', (req, res) => {
 })
 //***********************************************************/
 
+//get all messages in the info_db
+
+app.get('/api/allMessages', (req, res) => {
+    const dbQuery = "SELECT timestamp, first, last, email, message FROM info_db ORDER BY timestamp DESC;"
+    db.query(dbQuery, (error, result) => {
+        if(error){
+            console.log(`Error in the get request to info db`, error);
+        }
+        console.log(`Got all messages for Admin`, result);
+        if(result.length === 0){
+            res.send({error: `No messages to show yet...`})
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 app.post('/api/add', (req, res) => {
     const {id, timestamp, first, last, email, message} = req.body;
     const dbQuery = "INSERT INTO info_db VALUES (?, ?, ?, ?, ?, ?)";
@@ -46,8 +63,7 @@ app.post('/api/add', (req, res) => {
 //get messages that user sent for their profile
 
 app.get('/api/get/:email', (req, res) => {
-    console.log("hit endpoint");
-    console.log(req.params);
+    console.log(`here`);
     const {email} = req.params;
     const dbQuery = "SELECT * FROM info_db WHERE EMAIL=? ORDER BY timestamp DESC";
     db.query(dbQuery, email, (error, result) => {

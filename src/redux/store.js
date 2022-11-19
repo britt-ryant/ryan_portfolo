@@ -4,12 +4,13 @@ import formReducer from './formSlice';
 
 //import redux persist 
 import storage from 'redux-persist/lib/storage';
-import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import thunk from 'redux-thunk';
 
 const persistConfig = {
     key: 'root',
     storage,
+    version: 1
 };
 
 
@@ -28,6 +29,9 @@ export default configureStore({
             },
         }),
 });
+
+// let persistor = persistStore(store);
+
 
 // export default configureStore({
 //     reducer: {

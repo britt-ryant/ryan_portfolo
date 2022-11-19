@@ -48,7 +48,7 @@ class NavBar extends React.Component {
                                     {loggedIn && !admin ? <li className='nav-button dashboard-button' onClick={this.renderRedirect} ><Button sx={{color: 'white'}} variant='text'>Profile</Button></li> : 
                                     null}
                                     {loggedIn && admin ? 
-                                    <li className='nav-button dashboard-button' ><Button sx={{color: 'white'}} variant='text'>Admin Dashboard</Button></li> : 
+                                    <li className='nav-button dashboard-button'onClick={this.renderRedirect} ><Button sx={{color: 'white'}} variant='text'>Admin Dashboard</Button></li> : 
                                     null } 
                                     {this.state.redirect ? <Navigate to={`/profile/${userId}`} replace={true} /> : null } 
                             </ul>

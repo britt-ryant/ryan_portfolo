@@ -25,17 +25,14 @@ class PageRouter extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            ...this.props,
             id: this.props.user.userInfo.id,
         };
-        // this.setEditAccountInfo = this.setEditAccountInfo.bind(this);
     };
 
-    // setEditAccountInfo(){
-    //     this.setState({edit: true})
-    //     const { dispatch } = this.props;
-    //     dispatch(createAccountFormReducer())
-    //     return true
-    // }
+  componentDidMount(){
+    //console.log(this.state);
+  }
 
 
     render(){

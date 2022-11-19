@@ -40,6 +40,17 @@ export const getMessagesByUserAsync = createAsyncThunk(
             return messageList;
         }
     }
+);
+
+export const getAllMessagesAsync = createAsyncThunk(
+    '/api/getAllMessagesAsync',
+    async(payload) => {
+        const response = await fetch(`http://localhost:5000/api/allMessages`)
+        if(response.ok){
+            let messageList = await response.json();
+            return messageList;
+        }
+    }
 )
 
 
@@ -85,8 +96,18 @@ const formSlice = createSlice({
             });
             setState.then(() => {
                 return action.payload
-            })
-            
+            })   
+        },
+        [getAllMessagesAsync.pending]: (state, action) => {
+            console.log("getting messages");
+        }, 
+        [getAllMessagesAsync.fulfilled]: (state, action) => {
+            const setState = new Promise((resolve, reject) => {
+                resolve(state.messageLoading = false)
+            });
+            setState.then(() => {
+                return action.payload
+            })   
         }
     }
 
