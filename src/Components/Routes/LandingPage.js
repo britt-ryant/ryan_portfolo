@@ -18,6 +18,7 @@ import SectionOne from './Elements/SectionOne';
 import SectionTwo from './Elements/SectionTwo';
 import SectionThree from './Elements/SectionThree';
 import SectionFour from './Elements/SectionFour';
+import { adminLogOutReducer } from '../../redux/adminSlice';
 
 const stateToProps = (state) => {
     return state;
@@ -32,7 +33,12 @@ const LandingPage = (props, ref) => {
 
     const handleLogOutClick = (event) => {
         console.log('Log Out Button Clicked!');
+        if(props.user.admin){
+            console.log(`resetting admin data`);
+            dispatch(adminLogOutReducer())
+        }
         dispatch(logOut());
+        //need to dispatch an admin reducer to remove admin info OR purge redux state all together!
 
     };
     const handleLogInRenderClick = (event) => {

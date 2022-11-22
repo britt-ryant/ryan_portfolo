@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-scroll';
 
+//import redux persist component
+import {PURGE} from 'redux-persist';
+
 //import from react router dom
 import { Navigate } from 'react-router-dom';
 
@@ -17,11 +20,22 @@ class NavBar extends React.Component {
         super(props);
         this.state ={
             hide: false,
-            redirect: false
+            redirect: false,
+            dev: true
         };
-        this.renderRedirect = this.renderRedirect.bind(this)
+        this.renderRedirect = this.renderRedirect.bind(this);
+        this.handlePurge = this.handlePurge.bind(this);
     };
 
+    handlePurge(event){
+        event.preventDefault()
+        const {dispatch} = this.props;
+        dispatch({
+                type: PURGE,
+                key: 'root',
+                result: () => null
+            })
+    }
 
     renderRedirect(){
         this.setState({redirect: true})
@@ -42,6 +56,7 @@ class NavBar extends React.Component {
                                     <li className='nav-button'><Link activeClass='active' className='section-four' to='section-four' spy={true} smooth={true} duration={500}><Button sx={{color: 'white'}} variant='text'>Four</Button></Link></li>
                                     <li className='nav-button'><Link activeClass='active' className='footer' to='footer' spy={true} smooth={true} duration={500}><Button sx={{color: 'white'}} variant='text'>Contact</Button></Link></li>
                                     <li className='nav-button form-button'onClick={this.props.handleFormClick}><Button sx={{color: 'white'}} variant='text'>Send Email</Button></li>
+                                    <li className='nav-button form-button'onClick={this.handlePurge}><Button sx={{color: 'red'}} variant='text'>Purge Redux state</Button></li>
                                     {loggedIn ? 
                                     <li className='nav-button log-in-button' onClick={this.props.handleLogOutClick}><Button sx={{color: 'white'}} variant='text'>Log Out</Button></li> : 
                                     <li className='nav-button log-in-button'onClick={this.props.handleLogInRenderClick}><Button sx={{color: 'white'}} variant='text'>Log In</Button></li>}

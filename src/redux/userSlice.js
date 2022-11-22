@@ -31,6 +31,19 @@ export const getUserByIdAsync = createAsyncThunk(
             return {userInfo}
         }
     }
+);
+//Move this to admin slice
+export const getTotalUserCountAsync = createAsyncThunk(
+    '/user/getTotalUserCountAsync',
+    async(payload) => {
+        const response = await fetch(`http://localhost:5000/user/count`)
+        if(response.ok){
+            let userCount = await response.json();
+            return {userCount}
+        } else {
+            console.log(`Error with the usercount fetch on user slice`);
+        }
+    }
 )
 
 export const updateUserPasswordAsync = createAsyncThunk(
@@ -211,6 +224,13 @@ const userSlice = createSlice({
             }).then((data) => {
                 return data
             })
+        },
+        //Move this to admin slice
+        [getTotalUserCountAsync.pending]: (action, state) => {
+            console.log("Fetching user count");
+        },
+        [getTotalUserCountAsync.fulfilled]: (action, state) => {
+            return action.payload
         }
     }
 

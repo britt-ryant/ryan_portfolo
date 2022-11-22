@@ -1,3 +1,4 @@
+import { CloudQueue } from '@mui/icons-material';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 //import axios from 'axios';
 import { nanoid } from '@reduxjs/toolkit';
@@ -42,6 +43,17 @@ export const getMessagesByUserAsync = createAsyncThunk(
     }
 );
 
+export const getMessageCountAsync = createAsyncThunk(
+    '/api/getMessageCountAsync',
+    async(payload) => {
+        const response = await fetch(`http://localhost:5000/api/totalMessages`)
+        if(response.ok){
+            let messageCount = await response.json()
+            return {messageCount};
+        }
+    }
+)
+
 export const getAllMessagesAsync = createAsyncThunk(
     '/api/getAllMessagesAsync',
     async(payload) => {
@@ -60,7 +72,8 @@ const formSlice = createSlice({
         data: {}, 
         submitted: false,
         renderForm: false,
-        messageLoading: true
+        messageLoading: true,
+        messageCount: 0
     },
     reducers: {
         infoReducer: (state, action) => {
@@ -86,6 +99,7 @@ const formSlice = createSlice({
             console.log("posted request form information to db");
             state.submitted = true;
             state.data = action.payload;
+            state.messageCount += 1;
         },
         [getMessagesByUserAsync.pending]: (state, action) => {
             state.messageLoading = true
@@ -108,6 +122,13 @@ const formSlice = createSlice({
             setState.then(() => {
                 return action.payload
             })   
+        },
+        [getMessageCountAsync.pending]: (state, action) => {
+            console.log(`Loading message count....`);
+        },
+        [getMessageCountAsync.fulfilled]: (state, action) => {
+            let totalMessages = action.payload.messageCount[0].message_count;
+            state.messageCount = totalMessages
         }
     }
 

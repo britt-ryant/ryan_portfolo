@@ -1,6 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import formReducer from './formSlice';
+import adminReducer from './adminSlice';
 
 //import redux persist 
 import storage from 'redux-persist/lib/storage';
@@ -16,7 +17,8 @@ const persistConfig = {
 
 const reducers = combineReducers({
     user: userReducer,
-    form: formReducer
+    form: formReducer,
+    admin: adminReducer
 });
 const persistedReducer = persistReducer(persistConfig, reducers);
 

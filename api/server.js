@@ -38,11 +38,56 @@ app.get('/api/allMessages', (req, res) => {
         if(error){
             console.log(`Error in the get request to info db`, error);
         }
-        console.log(`Got all messages for Admin`, result);
+        // console.log(`Got all messages for Admin`, result);
         if(result.length === 0){
             res.send({error: `No messages to show yet...`})
         } else {
             res.send(result)
+        }
+    })
+});
+
+//get total number of messages
+app.get('/api/totalMessages', (req, res) => {
+    const dbQuery = "SELECT COUNT(info_db.message) AS message_count FROM info_db"
+    db.query(dbQuery, (error, result) => {
+        if(error){
+            console.log(`Got an error getting total messages`, error);
+        }
+        if(result.length === 0){
+            res.send({error: `No messages to lshow yet....`})
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+//get total number of users
+
+app.get('/user/count', (req, res) => {
+    const dbQuery = "SELECT COUNT(DISTINCT id) AS 'user_total' FROM user_db";
+    db.query(dbQuery, (error, result) => {
+        if(error){
+            console.log(`Error selecting user count`, error);
+        }
+
+        res.send(result);
+    })
+})
+
+//get total number of users and timestamp
+app.get('/admin/timechart', (req, res) => {
+    console.log(`here`);
+    const dbQuery = "with data as(select DATE(timestamp) as date, COUNT(id) as total_daily from user_db group by date) select date, total_daily, sum(total_daily) over(order by date) as cumulative_total from data";
+    db.query(dbQuery, (error, result) => {
+        if(error){
+            console.log(`screwed up query`, error);
+        }
+        console.log(result);
+        if(result.length !== 0){
+            res.send(result)
+        } else {
+            res.send({error: `No accounts created yet`})
         }
     })
 })
@@ -83,9 +128,7 @@ app.get('/api/get/:email', (req, res) => {
 app.get('/user/get/:email/:password', (req, res) => {
     const { email, password } = req.params;
     const getEmail = "SELECT * FROM user_db WHERE email=?";
-    console.log(getEmail);
-
-    db.query( getEmail, email, (error, result) => {
+     db.query( getEmail, email, (error, result) => {
         if(error){
             console.log(`Something went wrong getting email: ${email} from db`, error);
         }
@@ -132,7 +175,7 @@ app.post('/user/add', (req, res) => {
     bcrypt.hash(password, saltRounds).then((hashedPassword) => {
         console.log(hashedPassword);
         console.log(`add to user db: ${id}, ${first}, ${last}, ${email}, ${hashedPassword}, and if admin: ${admin}`);
-        const dbQuery = "INSERT INTO user_db VALUES(?, ?, ?, ?, ?, ?)";
+        const dbQuery = "INSERT INTO user_db VALUES(?, CURRENT_TIMESTAMP,?, ?, ?, ?, ?)";
         db.query(dbQuery, [id, first, last, email, hashedPassword, admin], (error, result) => {
             if(error){
                 console.log(`got an error entering user into db`, error);

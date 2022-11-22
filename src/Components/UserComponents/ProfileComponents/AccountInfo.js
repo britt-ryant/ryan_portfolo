@@ -72,9 +72,12 @@ class AccountInfo extends React.Component{
         return(
             <div>
             <Paper sx={{
-                        width: ['90%', '50%', '50%'],
-                        minWidth: '50%', 
-                        height: '50%',
+                        // width: ['90%', '50%', '50%'],
+                        // minWidth: '50%', 
+                        // height: '50%',
+                        border:2,
+                        // minWidth: '50%',
+                        maxWidth: '70%',
                         p: 2,
                         paddingTop: 5,
                         flexDirection: 'column',

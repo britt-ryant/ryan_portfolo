@@ -45,6 +45,8 @@ import { Navigate } from 'react-router-dom';
 import FormDialog from '../FormComponents/FormDialog';
 import { editAccountFormReducer } from '../../redux/userSlice';
 import {renderReducer} from '../../redux/formSlice';
+import UserStats from './Admin/UserStats';
+import NewUserChart from './Admin/NewUserChart';
 
 const darkTheme = createTheme({
     palette: {
@@ -200,18 +202,55 @@ const SideBar = (props) => {
                 //return console.log("admin render");
                 return(
                     <React.Fragment>
-                        <AccountInfo renderEdit={edit} />
-                        <MessageComponent />
+                        <Box sx={{
+                                marginTop: 5,
+                                display: 'grid',
+                                gap: 2,
+                                p: 2,
+                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                border: 2,
+                                width: '100%',
+                                
+                                }}>
+                            {/* <Grid item xs={12} md={8} lg={9} sx={{ border: 2}}> */}
+                            <AccountInfo renderEdit={edit} />
+                            {/* </Grid> */}
+                            {/* <Grid item xs={12} lg={9} sx={{border: 2, display: 'flex', justifyContent:'flex-end'}}> */}
+                            <UserStats />
+                        </Box>
+                        <Box sx={{
+                                    p: 2,
+                                    width: '100%',
+                                    }}>
+                            <NewUserChart />
+                            {/* </Grid> */}
+                            {/* <Grid item xs={12} md={8} lg={9}> */}
+                            <MessageComponent />
+                            {/* </Grid>  */}
+
+                        </Box>
+
                     </React.Fragment>
                 )
             default: 
                 return(
                     <React.Fragment>
-                        <AccountInfo    
-                                    renderEdit={edit} />
-                        <MessageComponent />
+                        <Box sx={{
+                            display: 'grid',
+                            gap: 2,
+                            gridTemplateColumns:'repeat(1, 1fr)',
+                            border: 2,
+                            width: '80%',
+                        }}>
+                            {/* <Grid item xs={12} md={8} lg={9} sx={{ border: 2, maxWidth: '50vw'}}> */}
+                                <AccountInfo renderEdit={edit} />
+                            {/* </Grid> */}
+                            {/* <Grid item xs={12} md={8} lg={9}> */}
+                                <MessageComponent />
+                            {/* </Grid> */}
+                        </Box>
                     </React.Fragment>
-                )
+                )   
         }
     }
 
@@ -314,25 +353,21 @@ const SideBar = (props) => {
                                 ? theme.palette.grey[100]
                                 : theme.palette.grey[700],
                             flexGrow: 1, 
-                            p: 3,
+                            // display: 'flex',
+                            // flexDirection: "column",
+                            p: 5,
                             justifyContent: "left",
                             width: '100vw',
                             height: '100vh'
                         }}>
                         <DrawerHeader theme={darkTheme}/>
-                        <Container maxWidth="lg" sx={{ mt: 4, mb: 4, marginLeft: 1}}>
+                        {/* <Container sx={{border: 2, mt: 4, mb: 4, marginLeft: 1}}> */}
                             <Grid container spacing={3} >
-                                <Grid item xs={12} md={8} lg={9}>
+                                
                                     {handleAdmin()}
-                                    {/* <AccountInfo 
-                                                // successToast={successToast}
-                                                renderEdit={edit}/>
-                                    <MessageComponent 
-                                                // successToast={successToast}
-                                                />*/}
-                                </Grid> 
+                            
                             </Grid>
-                        </Container>
+                        {/* </Container> */}
                         {redirect ? <Navigate to='/' replace={true} /> : null}
                     </Box>
                 </Box>

@@ -44,7 +44,7 @@ class MessageComponent extends React.Component{
         this.addMoreMessages = this.addMoreMessages.bind(this);
         this.hideMessages = this.hideMessages.bind(this);
         this.handleFormClose = this.handleFormClose.bind(this);
-        this.purgeState = this.purgeState.bind(this);
+        //this.purgeState = this.purgeState.bind(this);
     }
     componentDidMount(){
         // if(this.state.messages){
@@ -54,11 +54,14 @@ class MessageComponent extends React.Component{
         let email = this.props.user.userInfo.email;
         let query = null;
         if(this.props.user.admin){
-             query = dispatch(getAllMessagesAsync())
+              this.dataHandling(dispatch(getAllMessagesAsync()))
+             
         } else {
-             query = dispatch(getMessagesByUserAsync(email))
+             this.dataHandling(dispatch(getMessagesByUserAsync(email)))
         }
-        // dispatch(getMessagesByUserAsync(email))
+    };
+
+    dataHandling(query){
         query.then((data) => {
             if(data.payload.error){
                 this.setState({
@@ -74,33 +77,20 @@ class MessageComponent extends React.Component{
                 })
                 return data.payload
             }
-        }).then((data) => {
-            if(!data.error){
-                console.log(this.state);
-    
-                if(this.state.messages){
-                    let renderList = this.state.messages.slice(this.state.startIndex, this.state.cutOff);
-                    return this.setState({
-                                renderMessages: renderList,
-                            });
-                  } else {
-                      console.log(`messages loading.....`);
-                  }
-            }
         })
-    };
+    }
 
     //*********************PURGE STATEMENT FOR REDUX STATE DEV ONLY *************************/
-    purgeState(e){
-            e.preventDefault();
-            const {dispatch} = this.props;
-            dispatch({
-                    type: PURGE,
-                    key: 'root',
-                    result: () => null
-                })
+    // purgeState(e){
+    //         e.preventDefault();
+    //         const {dispatch} = this.props;
+    //         dispatch({
+    //                 type: PURGE,
+    //                 key: 'root',
+    //                 result: () => null
+    //             })
             
-            }
+    //         }
     //*********************PURGE STATEMENT FOR REDUX STATE DEV ONLY *************************/
 
 
@@ -141,6 +131,18 @@ class MessageComponent extends React.Component{
                     messages: [this.props.form.data],
                     error: false
                 })
+            }
+        }
+        if(this.state.messages !== prevState.messages){
+            if(!this.state.error){
+                if(this.state.messages){
+                    let renderList = this.state.messages.slice(this.state.startIndex, this.state.cutOff);
+                    return this.setState({
+                                renderMessages: renderList,
+                            });
+                  } else {
+                      console.log(`messages loading.....`);
+                  }
             }
         }
     }
@@ -185,29 +187,9 @@ class MessageComponent extends React.Component{
         dispatch(renderReducer());
     }
 
-    // renderTemplate(){
-    //     if(this.state.user.admin){
-    //         console.log(this.state.renderMessages);
-    //         return(
-    //             <React.Fragment>
-    //                 <TableHead>
-    //                     <TableRow >
-    //                         <TableCell>Time Sent</TableCell>
-    //                         <TableCell>Date Sent</TableCell>
-    //                         <TableCell>Message</TableCell>
-    //                     </TableRow>
-    //                 </TableHead>
-    //             </React.Fragment>
-    //         )
-    //     }
-    // }
-
     renderItems(message){
-        console.log('rendering');
-        console.log(message);
         switch(message.length){
             case 1: 
-            console.log("there is only one message");
             const newDate = new Date(message[0].timestamp.slice(0, -1));
             const date = newDate.toString().slice(0, 15);
             const time = newDate.toLocaleTimeString();
@@ -216,9 +198,9 @@ class MessageComponent extends React.Component{
                     <TableRow key={45}>
                         <TableCell sx={{width: 150}}>{time}</TableCell>
                         <TableCell sx={{width: 200}}>{date}</TableCell>
-                            {this.state.user.admin ? <TableCell>{message[0].first}</TableCell> : null}
-                            {this.state.user.admin ? <TableCell>{message[0].last}</TableCell> : null}
-                            {this.state.user.admin ? <TableCell>{message[0].email}</TableCell> : null}
+                            {this.props.user.admin ? <TableCell>{message[0].first}</TableCell> : null}
+                            {this.props.user.admin ? <TableCell>{message[0].last}</TableCell> : null}
+                            {this.props.user.admin ? <TableCell>{message[0].email}</TableCell> : null}
                        <TableCell>{message[0].message}</TableCell>
                     </TableRow>
                 </React.Fragment>
@@ -233,9 +215,9 @@ class MessageComponent extends React.Component{
                             <TableRow key={item.id} >
                                 <TableCell sx={{width: 150}}>{time}</TableCell>
                                 <TableCell sx={{width: 200}}>{date}</TableCell>
-                                {this.state.user.admin ? <TableCell>{item.first}</TableCell> : null}
-                                {this.state.user.admin ? <TableCell>{item.last}</TableCell> : null}
-                                {this.state.user.admin ? <TableCell>{item.email}</TableCell> : null}
+                                {this.props.user.admin ? <TableCell>{item.first}</TableCell> : null}
+                                {this.props.user.admin ? <TableCell>{item.last}</TableCell> : null}
+                                {this.props.user.admin ? <TableCell>{item.email}</TableCell> : null}
                                 <TableCell>{item.message}</TableCell>
                             </TableRow>
                         </React.Fragment>
@@ -244,32 +226,28 @@ class MessageComponent extends React.Component{
         }
     }
     render(){
-        console.log(this.state);
         return(
             <Paper 
                 sx={{
-                    marginTop: 2,
-                    width: '90vw',
-                    maxHeight: '50vh',
-                    minHeight: '10vh',
-                    overflow: 'auto',
-                    flexDirection: 'column',
-                    display: 'flex',
-                    textAlign: 'left',
-                    boxShadow: 20,
-                    p:2
+                        p: 2,
+                        border: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '100%',
+                        boxShadow: 20
 
                 }}>
                 <Typography 
-                    component="h2" 
-                    sx={{
-                        fontSize: 30,                        
-                        paddingBottom: 0,
-
-                        }}
-                    varitant="h6" 
-                    color="primary" 
-                    gutterBottom
+                       noWrap
+                       component="h3" 
+                       sx={{
+                           p: 1,
+                           paddingBottom:0,
+                           textAlign: 'left'
+                       }}
+                       variant="h5" 
+                       color="primary" 
+                       gutterBottom
                     >
                         Recent Messages Sent:
                 </Typography>
@@ -307,7 +285,7 @@ class MessageComponent extends React.Component{
                 {!this.state.hideButton ? <Button varitant="text" sx={{justifyContent: 'left', paddingTop:2}} onClick={this.addMoreMessages}>
                     See More
                 </Button> : null}
-                <Button onClick={this.purgeState}>Purge</Button>
+                {/* <Button onClick={this.purgeState}>Purge</Button> */}
                 {this.state.hideButton && !this.state.error? 
                 <Button variant='text'sx={{justifyContent: 'left', paddingTop:2}} onClick={this.hideMessages}>Hide</Button> : null}
                  {this.props.form.renderForm ? <FormDialog
