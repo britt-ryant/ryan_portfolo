@@ -53,6 +53,7 @@ import UserStats from './Admin/UserStats';
 import NewUserChart from './Admin/NewUserChart';
 import { chartReducer, totalUserCountReducer } from '../../redux/adminSlice';
 import AreYouSure from '../FormComponents/User/AreYouSure';
+import WeatherComponent from './WeatherComponent';
 
 
 const darkTheme = createTheme({
@@ -247,12 +248,13 @@ const SideBar = (props) => {
                                 display: 'grid',
                                 gap: 2,
                                 p: 2,
-                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                gridTemplateColumns: 'repeat(3, 1fr)',
                                 width: '100%',
                                 
                                 }}>
                             <AccountInfo renderEdit={edit} />
                             {admin.renderTotalUserCount ? <UserStats /> : null}
+                            <WeatherComponent />
                         </Box>
                         <Box sx={{
                                     p: 2,
@@ -260,6 +262,7 @@ const SideBar = (props) => {
                                     }}>
                             {admin.renderChart ? <NewUserChart /> : null}
                             {form.renderList ? <MessageComponent /> : null}
+                        
                         </Box>
 
                     </React.Fragment>

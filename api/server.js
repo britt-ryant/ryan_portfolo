@@ -4,7 +4,7 @@ const colors = require ('colors');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mysql = require('mysql2');
-const { response } = require('express');
+//const { response } = require('express');
 const bcrypt = require('bcrypt');
 
 dotenv.config({ path: './config.env'});

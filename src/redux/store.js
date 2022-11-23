@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import formReducer from './formSlice';
 import adminReducer from './adminSlice';
+import weatherReducer from './weatherSlice';
 
 //import redux persist 
 import storage from 'redux-persist/lib/storage';
@@ -18,7 +19,8 @@ const persistConfig = {
 const reducers = combineReducers({
     user: userReducer,
     form: formReducer,
-    admin: adminReducer
+    admin: adminReducer,
+    weather: weatherReducer
 });
 const persistedReducer = persistReducer(persistConfig, reducers);
 

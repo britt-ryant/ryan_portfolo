@@ -77,7 +77,6 @@ class AccountInfo extends React.Component{
                         // height: '50%',
                         border:2,
                         // minWidth: '50%',
-                        maxWidth: '50%',
                         p: 2,
                         paddingTop: 5,
                         flexDirection: 'column',
