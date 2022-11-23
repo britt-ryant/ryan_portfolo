@@ -55,9 +55,11 @@ class UserStats extends React.Component{
         return(
             <Paper
                     sx={{
+                        border: 2,
                         boxShadow: 20,
                         p: 2,
-                        // justifyContent: 'left'
+                        marginLeft: 6,
+                        maxWidth: '70%',
                         textAlign: 'left'
                     }}>
                 <Typography
@@ -83,7 +85,6 @@ class UserStats extends React.Component{
                                     textAlign: 'left'
                                 }}
                                 variant="h5" 
-                                color="black" 
                                 gutterBottom
             >
                 Total Users:      {this.state.userTotal ? this.state.userTotal : "Loading user total..."}</Typography>

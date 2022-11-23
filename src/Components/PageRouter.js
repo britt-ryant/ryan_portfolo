@@ -48,8 +48,8 @@ class PageRouter extends React.Component{
                                                                                         handleFormClose={this.handleFormClose} 
                                                                                         successToast={this.successToast} 
                                                                                         handleCreateAccountRender={this.handleCreateAccountRender} />} /> */}
-                        <Route path='/404' element={<NotFound />} />
-                        <Route path='*' element={<Navigate replace to='/404' />} />
+                        {/* <Route path='/404' element={<NotFound />} /> */}
+                        {/* <Route path='*' element={<Navigate replace to='/404' />} /> */}
                     </Routes>
                 </Router>
             </div>

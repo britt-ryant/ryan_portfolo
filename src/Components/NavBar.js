@@ -55,8 +55,8 @@ class NavBar extends React.Component {
                                     <li className='nav-button'><Link activeClass='active' className='section-three' to='section-three' spy={true} smooth={true} duration={500}><Button sx={{color: 'white'}} variant='text'>Three</Button></Link></li>
                                     <li className='nav-button'><Link activeClass='active' className='section-four' to='section-four' spy={true} smooth={true} duration={500}><Button sx={{color: 'white'}} variant='text'>Four</Button></Link></li>
                                     <li className='nav-button'><Link activeClass='active' className='footer' to='footer' spy={true} smooth={true} duration={500}><Button sx={{color: 'white'}} variant='text'>Contact</Button></Link></li>
-                                    <li className='nav-button form-button'onClick={this.props.handleFormClick}><Button sx={{color: 'white'}} variant='text'>Send Email</Button></li>
-                                    <li className='nav-button form-button'onClick={this.handlePurge}><Button sx={{color: 'red'}} variant='text'>Purge Redux state</Button></li>
+                                    {!admin ? <li className='nav-button form-button'onClick={this.props.handleFormClick}><Button sx={{color: 'white'}} variant='text'>Send Email</Button></li> : null}
+                                    {admin ? <li className='nav-button form-button'onClick={this.handlePurge}><Button sx={{color: 'red'}} variant='text'>Purge Redux state</Button></li> : null}
                                     {loggedIn ? 
                                     <li className='nav-button log-in-button' onClick={this.props.handleLogOutClick}><Button sx={{color: 'white'}} variant='text'>Log Out</Button></li> : 
                                     <li className='nav-button log-in-button'onClick={this.props.handleLogInRenderClick}><Button sx={{color: 'white'}} variant='text'>Log In</Button></li>}

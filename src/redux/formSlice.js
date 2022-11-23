@@ -65,23 +65,36 @@ export const getAllMessagesAsync = createAsyncThunk(
     }
 )
 
+const initialState = {
+    data: {}, 
+    submitted: false,
+    renderList: true,
+    renderForm: false,
+    messageLoading: true,
+    messageCount: 0
+}
+
 
 const formSlice = createSlice({
     name: "form",
-    initialState: {
-        data: {}, 
-        submitted: false,
-        renderForm: false,
-        messageLoading: true,
-        messageCount: 0
-    },
+    // initialState: {
+    //     data: {}, 
+    //     submitted: false,
+    //     renderList: true,
+    //     renderForm: false,
+    //     messageLoading: true,
+    //     messageCount: 0
+    // },
+    initialState,
     reducers: {
         infoReducer: (state, action) => {
             //state.submitted = action.payload.submitted
         },
         renderReducer: (state, action) => {
            state.renderForm = !state.renderForm;
-
+        },
+        renderListReducer: (state, action) => {
+            state.renderList = !state.renderList
         },
         setMessageState: (state, action) => {
             state.data = action.payload
@@ -89,6 +102,9 @@ const formSlice = createSlice({
         setStateUponFormSubmit: (state, action) => {
             console.log(`seeting email form state`);
             state.renderForm = false
+        },
+        resetFormDataReducer: (state, action) => {
+            return initialState;
         }
     }, 
     extraReducers: {
@@ -135,5 +151,5 @@ const formSlice = createSlice({
 
 })
 
-export const { infoReducer, renderReducer, setMessageState } = formSlice.actions;
+export const { infoReducer, renderReducer, setMessageState, renderListReducer, resetFormDataReducer } = formSlice.actions;
 export default formSlice.reducer;

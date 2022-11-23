@@ -239,7 +239,19 @@ app.put('/user/:id', (req, res) => {
 
 })
 
-
+app.delete(`/delete/:id`, (req, res) => {
+    const {id} = req.params;
+    const dbQuery = "DELETE FROM user_db WHERE id=?";
+    console.log(`deleting on server`);
+    db.query(dbQuery, id, (error, result) => {
+        if(error){
+            console.log(`there was an error finding user ${id}`);
+        } else {
+            console.log(`account was deleted`);
+            res.send({deleteMessage: `Your account was deleted! We are sad to see you go, please come back soon!`})
+        }
+    })
+})
 
 
 app.get('/api/hello', (req, res) => {

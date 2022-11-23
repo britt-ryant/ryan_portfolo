@@ -4,7 +4,7 @@ import React, { useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Element, Events, scroller, animateScroll as scroll } from 'react-scroll';
 import NavBar from '../NavBar';
-import { renderReducer } from '../../redux/formSlice';
+import { renderReducer, resetFormDataReducer } from '../../redux/formSlice';
 import { logInFormReducer, createAccountFormReducer, logOut } from '../../redux/userSlice';
 import { connect } from 'react-redux';
 import toast, {Toaster} from 'react-hot-toast';
@@ -38,6 +38,7 @@ const LandingPage = (props, ref) => {
             dispatch(adminLogOutReducer())
         }
         dispatch(logOut());
+        dispatch(resetFormDataReducer());
         //need to dispatch an admin reducer to remove admin info OR purge redux state all together!
 
     };

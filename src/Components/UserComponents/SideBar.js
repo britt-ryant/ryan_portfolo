@@ -34,19 +34,26 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeIcon from '@mui/icons-material/Mode';
 import MailIcon from '@mui/icons-material/Mail';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
+import InsightsIcon from '@mui/icons-material/Insights';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import { alpha } from "@mui/material";
-import ProfileInfo from '../../ComponentsUnused/ProfileInfo';
 import AccountInfo from './ProfileComponents/AccountInfo';
 import MessageComponent from './ProfileComponents/MessageComponent';
+import FormDialog from '../FormComponents/FormDialog';
+
 
 
 //import react-router-dom components
 import { Navigate } from 'react-router-dom';
-import FormDialog from '../FormComponents/FormDialog';
-import { editAccountFormReducer } from '../../redux/userSlice';
-import {renderReducer} from '../../redux/formSlice';
+import { deleteAccountReducer, editAccountFormReducer } from '../../redux/userSlice';
+import {renderListReducer, renderReducer} from '../../redux/formSlice';
 import UserStats from './Admin/UserStats';
 import NewUserChart from './Admin/NewUserChart';
+import { chartReducer, totalUserCountReducer } from '../../redux/adminSlice';
+import AreYouSure from '../FormComponents/User/AreYouSure';
+
 
 const darkTheme = createTheme({
     palette: {
@@ -131,6 +138,7 @@ const AppBar = styled(MuiAppBar, {
 const SideBar = (props) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
+    const admin = useSelector(state => state.admin);
     const form = useSelector(state => state.form);
     const initials = `${user.userInfo.first.charAt(0).toUpperCase()}${user.userInfo.last.charAt(0).toUpperCase()}`;
     const theme = useTheme();
@@ -173,6 +181,18 @@ const SideBar = (props) => {
             case "Dark Mode":
                 setMode("Light Mode");
             break;
+            case "User Totals":
+                dispatch(totalUserCountReducer());
+            break;
+            case "Insights": 
+                dispatch(chartReducer());
+            break;
+            case "Show Messages":
+                dispatch(renderListReducer());
+            break;
+            case "Delete Account":
+                dispatch(deleteAccountReducer());
+            break;
             default:
                 console.log('Something went wrong!');
         }
@@ -190,13 +210,33 @@ const SideBar = (props) => {
                 return(<DarkModeIcon/>);
             case "Dark Mode":
                 return(<LightModeIcon />);
+            case "Delete Account":
+                return(<DeleteForeverIcon />);
+            case "Insights":
+                return(<InsightsIcon />);
+            case "User Totals":
+                return(<EmojiPeopleIcon />);
+            case "Show Messages":
+                return(<DynamicFeedIcon />)
             default:
                 return(null);
         }
     };
 
+    const sideBarRenderList = () => {
+        if(user.admin){
+            return ["Home", "Edit Account", "User Totals", "Insights", "Show Messages"]
+        } else {
+            return ["Home", "Edit Account", "Send Message", "Show Messages", "Delete Account"]
+        }
+    }
+    
+    const handleRedirect = () => {
+        return setRedirect(true)
+    }
+
     const handleAdmin = () => {
-        //console.log(`Handling Admin`);
+        // console.log(`Handling Admin`);
         switch(true){
             case user.admin:
                 //return console.log("admin render");
@@ -208,26 +248,18 @@ const SideBar = (props) => {
                                 gap: 2,
                                 p: 2,
                                 gridTemplateColumns: 'repeat(2, 1fr)',
-                                border: 2,
                                 width: '100%',
                                 
                                 }}>
-                            {/* <Grid item xs={12} md={8} lg={9} sx={{ border: 2}}> */}
                             <AccountInfo renderEdit={edit} />
-                            {/* </Grid> */}
-                            {/* <Grid item xs={12} lg={9} sx={{border: 2, display: 'flex', justifyContent:'flex-end'}}> */}
-                            <UserStats />
+                            {admin.renderTotalUserCount ? <UserStats /> : null}
                         </Box>
                         <Box sx={{
                                     p: 2,
                                     width: '100%',
                                     }}>
-                            <NewUserChart />
-                            {/* </Grid> */}
-                            {/* <Grid item xs={12} md={8} lg={9}> */}
-                            <MessageComponent />
-                            {/* </Grid>  */}
-
+                            {admin.renderChart ? <NewUserChart /> : null}
+                            {form.renderList ? <MessageComponent /> : null}
                         </Box>
 
                     </React.Fragment>
@@ -242,12 +274,8 @@ const SideBar = (props) => {
                             border: 2,
                             width: '80%',
                         }}>
-                            {/* <Grid item xs={12} md={8} lg={9} sx={{ border: 2, maxWidth: '50vw'}}> */}
                                 <AccountInfo renderEdit={edit} />
-                            {/* </Grid> */}
-                            {/* <Grid item xs={12} md={8} lg={9}> */}
-                                <MessageComponent />
-                            {/* </Grid> */}
+                                {form.renderList ? <MessageComponent /> : null}
                         </Box>
                     </React.Fragment>
                 )   
@@ -257,6 +285,9 @@ const SideBar = (props) => {
     // const successToast = () => {
     //     console.log("success Toast Sidebar");
     // }
+    const handleFormClose = () => {
+        dispatch(renderReducer());
+    }
 
 
     return(
@@ -265,6 +296,7 @@ const SideBar = (props) => {
                 position='top-left'
                 reverseOrder={true}
                 />
+                {/* Change here to reflect state in redux store */}
             <ThemeProvider theme={mode === "Dark Mode" ? darkTheme : lightTheme}>
             <CssBaseline />
                 <Box sx={{ display: 'flex'}}>
@@ -319,7 +351,7 @@ const SideBar = (props) => {
                                     </ListItemButton>
                                 </ListItem>
                             <Divider />
-                            {['Home', 'Edit Account', 'Send Message'].map((text, index) => (
+                            {sideBarRenderList().map((text, index) => (
                                 <ListItem key={text} disablePadding sx={{ display: 'block'}}>
                                     <ListItemButton
                                         sx={{
@@ -353,12 +385,13 @@ const SideBar = (props) => {
                                 ? theme.palette.grey[100]
                                 : theme.palette.grey[700],
                             flexGrow: 1, 
+                            border:2,
                             // display: 'flex',
                             // flexDirection: "column",
                             p: 5,
                             justifyContent: "left",
-                            width: '100vw',
-                            height: '100vh'
+                            width: '100%',
+                            minHeight: '100vh'
                         }}>
                         <DrawerHeader theme={darkTheme}/>
                         {/* <Container sx={{border: 2, mt: 4, mb: 4, marginLeft: 1}}> */}
@@ -369,6 +402,11 @@ const SideBar = (props) => {
                             </Grid>
                         {/* </Container> */}
                         {redirect ? <Navigate to='/' replace={true} /> : null}
+                        {form.renderForm ? <FormDialog
+                                                                        handleFormClose={handleFormClose} 
+                                                                        successToast={props.successToast} 
+                                                                         /> : null}
+                        {user.renderForm.deleteAccount ? <AreYouSure handleRedirect={handleRedirect}/> : null}
                     </Box>
                 </Box>
             </ThemeProvider>

@@ -43,7 +43,7 @@ class MessageComponent extends React.Component{
         }
         this.addMoreMessages = this.addMoreMessages.bind(this);
         this.hideMessages = this.hideMessages.bind(this);
-        this.handleFormClose = this.handleFormClose.bind(this);
+        // this.handleFormClose = this.handleFormClose.bind(this);
         //this.purgeState = this.purgeState.bind(this);
     }
     componentDidMount(){
@@ -182,10 +182,10 @@ class MessageComponent extends React.Component{
         })
     };
 
-    handleFormClose(){
-        const {dispatch} = this.props;
-        dispatch(renderReducer());
-    }
+    // handleFormClose(){
+    //     const {dispatch} = this.props;
+    //     dispatch(renderReducer());
+    // }
 
     renderItems(message){
         switch(message.length){
@@ -288,10 +288,10 @@ class MessageComponent extends React.Component{
                 {/* <Button onClick={this.purgeState}>Purge</Button> */}
                 {this.state.hideButton && !this.state.error? 
                 <Button variant='text'sx={{justifyContent: 'left', paddingTop:2}} onClick={this.hideMessages}>Hide</Button> : null}
-                 {this.props.form.renderForm ? <FormDialog
+                 {/* {this.props.form.renderForm ? <FormDialog
                                                                         handleFormClose={this.handleFormClose} 
                                                                         successToast={this.props.successToast} 
-                                                                         /> : null}
+                                                                         /> : null} */}
             </Paper>
         )
     }

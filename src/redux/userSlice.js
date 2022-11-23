@@ -112,6 +112,22 @@ export const updateUserAsync = createAsyncThunk(
                 return{ result };
             }
         }
+);
+
+export const deleteUserAsync = createAsyncThunk(
+    '/user/deleteUserAsync',
+    async(payload) => {
+        console.log(`in delete account reducer`, payload);
+        const response = await fetch(`http://localhost:5000/delete/${payload.user.userInfo.id}`,
+        {   
+            method: 'DELETE'
+        })
+        if(response.ok){
+            console.log(`user ${payload.user.userInfo.first} ${payload.user.userInfo.falslast} was deleted`);
+            const result = await response.json();
+            return {result}
+        }
+    }
 )
 
 
@@ -129,7 +145,8 @@ const initialState = {
         renderForm: {
                     logIn: false, 
                     createAccount: false,
-                    editAccount: false
+                    editAccount: false,
+                    deleteAccount: false
                     }
 };
 
@@ -145,6 +162,9 @@ const userSlice = createSlice({
         },
         createAccountFormReducer: (state, action) => {
             state.renderForm.createAccount = !state.renderForm.createAccount;
+        },
+        deleteAccountReducer: (state, action) => {
+            state.renderForm.deleteAccount = !state.renderForm.deleteAccount;
         },
         setState: (state, action) => {  
             let admin = false;      
@@ -231,11 +251,17 @@ const userSlice = createSlice({
         },
         [getTotalUserCountAsync.fulfilled]: (action, state) => {
             return action.payload
+        },
+        [deleteUserAsync.pending]: (action, state) => {
+            console.log(`Deleting user...`);
+        },
+        [deleteUserAsync.fulfilled]: (action, state) => {
+            return initialState
         }
     }
 
 })
 
 
-export const {adminReducer, logInFormReducer, createAccountFormReducer, setState, logOut, editAccountFormReducer} = userSlice.actions;
+export const {adminReducer, logInFormReducer, createAccountFormReducer, setState, logOut, editAccountFormReducer, deleteAccountReducer} = userSlice.actions;
 export default userSlice.reducer;
