@@ -38,6 +38,8 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
 import InsightsIcon from '@mui/icons-material/Insights';
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
+import CycloneTwoToneIcon from '@mui/icons-material/CycloneTwoTone';
+import BackupTableRoundedIcon from '@mui/icons-material/BackupTableRounded';
 import { alpha } from "@mui/material";
 import AccountInfo from './ProfileComponents/AccountInfo';
 import MessageComponent from './ProfileComponents/MessageComponent';
@@ -51,9 +53,11 @@ import { deleteAccountReducer, editAccountFormReducer } from '../../redux/userSl
 import {renderListReducer, renderReducer} from '../../redux/formSlice';
 import UserStats from './Admin/UserStats';
 import NewUserChart from './Admin/NewUserChart';
-import { chartReducer, totalUserCountReducer } from '../../redux/adminSlice';
+import { chartReducer, totalUserCountReducer, tableReducer } from '../../redux/adminSlice';
 import AreYouSure from '../FormComponents/User/AreYouSure';
 import WeatherComponent from './WeatherComponent';
+import weatherSlice, { renderWeatherInfo } from '../../redux/weatherSlice';
+import TableManager from './Admin/TableManager';
 
 
 const darkTheme = createTheme({
@@ -141,6 +145,7 @@ const SideBar = (props) => {
     const user = useSelector(state => state.user);
     const admin = useSelector(state => state.admin);
     const form = useSelector(state => state.form);
+    const weather = useSelector(state => state.weather);
     const initials = `${user.userInfo.first.charAt(0).toUpperCase()}${user.userInfo.last.charAt(0).toUpperCase()}`;
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -194,6 +199,12 @@ const SideBar = (props) => {
             case "Delete Account":
                 dispatch(deleteAccountReducer());
             break;
+            case "Weather":
+                dispatch(renderWeatherInfo());
+            break;
+            case "SQL Tables":
+                dispatch(tableReducer());
+            break;
             default:
                 console.log('Something went wrong!');
         }
@@ -218,7 +229,11 @@ const SideBar = (props) => {
             case "User Totals":
                 return(<EmojiPeopleIcon />);
             case "Show Messages":
-                return(<DynamicFeedIcon />)
+                return(<DynamicFeedIcon />);
+            case "Weather":
+                return (<CycloneTwoToneIcon />);
+            case "SQL Tables":
+                return(<BackupTableRoundedIcon />)
             default:
                 return(null);
         }
@@ -226,9 +241,9 @@ const SideBar = (props) => {
 
     const sideBarRenderList = () => {
         if(user.admin){
-            return ["Home", "Edit Account", "User Totals", "Insights", "Show Messages"]
+            return ["Home", "Edit Account", "User Totals", "Weather", "Insights", "SQL Tables", "Show Messages"]
         } else {
-            return ["Home", "Edit Account", "Send Message", "Show Messages", "Delete Account"]
+            return ["Home", "Edit Account", "Send Message", "Weather", "Show Messages", "Delete Account"]
         }
     }
     
@@ -250,19 +265,19 @@ const SideBar = (props) => {
                                 p: 2,
                                 gridTemplateColumns: 'repeat(3, 1fr)',
                                 width: '100%',
-                                
                                 }}>
                             <AccountInfo renderEdit={edit} />
                             {admin.renderTotalUserCount ? <UserStats /> : null}
-                            <WeatherComponent />
+                            {weather.renderWeatherData ? <WeatherComponent /> : null}
                         </Box>
                         <Box sx={{
                                     p: 2,
                                     width: '100%',
+                                    gap: 5,
                                     }}>
                             {admin.renderChart ? <NewUserChart /> : null}
+                            {admin.renderTable ? <TableManager /> : null}
                             {form.renderList ? <MessageComponent /> : null}
-                        
                         </Box>
 
                     </React.Fragment>
@@ -277,7 +292,14 @@ const SideBar = (props) => {
                             border: 2,
                             width: '80%',
                         }}>
-                                <AccountInfo renderEdit={edit} />
+                            <Box 
+                                sx={{
+                                    display: 'flex',
+                                    gap: 5
+                                }}>
+                            <AccountInfo renderEdit={edit} />
+                            {weather.renderWeatherData ? <WeatherComponent /> : null}
+                            </Box>
                                 {form.renderList ? <MessageComponent /> : null}
                         </Box>
                     </React.Fragment>
@@ -388,20 +410,15 @@ const SideBar = (props) => {
                                 ? theme.palette.grey[100]
                                 : theme.palette.grey[700],
                             flexGrow: 1, 
-                            border:2,
-                            // display: 'flex',
-                            // flexDirection: "column",
+                            
                             p: 5,
                             justifyContent: "left",
-                            width: '100%',
-                            minHeight: '100vh'
+                            
                         }}>
                         <DrawerHeader theme={darkTheme}/>
                         {/* <Container sx={{border: 2, mt: 4, mb: 4, marginLeft: 1}}> */}
                             <Grid container spacing={3} >
-                                
                                     {handleAdmin()}
-                            
                             </Grid>
                         {/* </Container> */}
                         {redirect ? <Navigate to='/' replace={true} /> : null}

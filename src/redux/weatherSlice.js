@@ -7,7 +7,6 @@ export const getWeatherDataAsync = createAsyncThunk(
     async(payload) => {
         const latitude = payload.latitude;
         const longitude = payload.longitude;
-        console.log(latitude, longitude);
         const response = await fetch(`https://dark-sky.p.rapidapi.com/${latitude},${longitude}?units=auto&lang=en`,
         {
             method: 'GET',
@@ -15,21 +14,19 @@ export const getWeatherDataAsync = createAsyncThunk(
                 'X-RapidAPI-Key': process.env.REACT_APP_X_RAPID_API_KEY,
                 'X-RapidAPI-Host': 'dark-sky.p.rapidapi.com'
             }
-        }).then((response) => {
-            return response.json();
-        }).then(response => console.log(response))
-        
-        // if(response.status === 200){
-        //     return {success: true, data: data}
-        // }
-        // return {success: false, error: response.statusText}
+        })
+        if(response.ok){
+            let data = await response.json();
+            return { data }
+        }
     }
 )
 const initialState ={
     data: {},
     loaded: false,
     renderWeatherData: true,
-    position: {}
+    position: {},
+    icon: false
 };
 
 const weatherSlice = createSlice({
@@ -40,8 +37,15 @@ const weatherSlice = createSlice({
             state.renderWeatherData = !state.renderWeatherData
         },
         setPosition: (state, action) => {
-            console.log(action.payload);
             state.position = {latitude: action.payload.latitude, longitude: action.payload.longitude}
+        }
+    },
+    extraReducers:{
+        [getWeatherDataAsync.pending]: (state, action) => {
+            console.log(`getting weather data....`);
+        },
+        [getWeatherDataAsync.fulfilled]: (state, action) => {
+            state.data = action.payload.data
         }
     }
 })

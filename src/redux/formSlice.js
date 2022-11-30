@@ -65,6 +65,18 @@ export const getAllMessagesAsync = createAsyncThunk(
     }
 )
 
+export const getMessagesBySearchAsync = createAsyncThunk(
+    '/api/getMessagesBySearcAsync',
+    async(payload) => {
+        // console.log(payload);
+        const response = await fetch(`http://localhost:5000/search/${payload.select}/${payload.searchString}`)
+        if(response.ok){
+            let messageList = await response.json();
+            return messageList;
+        }
+    }
+)
+
 const initialState = {
     data: {}, 
     submitted: false,
@@ -77,14 +89,6 @@ const initialState = {
 
 const formSlice = createSlice({
     name: "form",
-    // initialState: {
-    //     data: {}, 
-    //     submitted: false,
-    //     renderList: true,
-    //     renderForm: false,
-    //     messageLoading: true,
-    //     messageCount: 0
-    // },
     initialState,
     reducers: {
         infoReducer: (state, action) => {
@@ -145,6 +149,16 @@ const formSlice = createSlice({
         [getMessageCountAsync.fulfilled]: (state, action) => {
             let totalMessages = action.payload.messageCount[0].message_count;
             state.messageCount = totalMessages
+        },
+        [getMessagesBySearchAsync.pending]: (state, action) => {
+            state.messageLoading = true;
+        },
+        [getMessagesBySearchAsync.fulfilled]: (state, action) => {
+            new Promise((resolve, reject) => {
+                resolve(state.messageLoading = false)
+            }).then(() => {
+                return action.payload
+            })
         }
     }
 

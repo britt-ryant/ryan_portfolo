@@ -55,15 +55,30 @@ app.get('/api/totalMessages', (req, res) => {
             console.log(`Got an error getting total messages`, error);
         }
         if(result.length === 0){
-            res.send({error: `No messages to lshow yet....`})
+            res.send({error: `No messages to show yet....`})
         } else {
             res.send(result)
+        }
+    })
+});
+
+//get messages based on search parameters
+app.get(`/search/:select/:searchString`, (req, res) => {
+    console.log(req.params);
+    const {select, searchString} = req.params;
+    const dbQuery = `SELECT * FROM info_db AS results WHERE ${select} LIKE '%${searchString}%' ORDER BY timestamp DESC`;
+    db.query(dbQuery, [select, searchString], (error, result) => {
+        if(error){
+            console.log(`there was an error retrieving search data`, error);
+        }else if(result.length === 0){
+            res.send({error: `No messages to show...`})
+        } else {
+            res.send(result);
         }
     })
 })
 
 //get total number of users
-
 app.get('/user/count', (req, res) => {
     const dbQuery = "SELECT COUNT(DISTINCT id) AS 'user_total' FROM user_db";
     db.query(dbQuery, (error, result) => {
@@ -73,12 +88,26 @@ app.get('/user/count', (req, res) => {
 
         res.send(result);
     })
-})
+});
 
 //get total number of users and timestamp
 app.get('/admin/timechart', (req, res) => {
-    console.log(`here`);
-    const dbQuery = "with data as(select DATE(timestamp) as date, COUNT(id) as total_daily from user_db group by date) select date, total_daily, sum(total_daily) over(order by date) as cumulative_total from data";
+    //const dbQuery = "with data as(select DATE(timestamp) as date, COUNT(id) as total_daily from user_db group by date) select date, total_daily, sum(total_daily) over(order by date) as cumulative_total from data";
+    const dbQuery = `with data as(
+                                SELECT 
+                                    DATE(timestamp_created) AS date,
+                                    COUNT(account_id) AS total
+                                    FROM account_status
+                                    GROUP BY date
+                                    UNION ALL 
+                                SELECT
+                                    DATE(timestamp_deleted) AS time_deleted,
+                                    -COUNT(CASE WHEN account_status = 0 THEN 1 ELSE NULL END) AS deletion_count
+                                    FROM account_status
+                                    GROUP BY time_deleted
+                                    ORDER BY date)
+                                        SELECT DISTINCT
+                                            date, SUM(total) OVER (ORDER BY date) AS cumulative_total FROM data`
     db.query(dbQuery, (error, result) => {
         if(error){
             console.log(`screwed up query`, error);
@@ -92,6 +121,7 @@ app.get('/admin/timechart', (req, res) => {
     })
 })
 
+//post method to add message to the info_dbb table
 app.post('/api/add', (req, res) => {
     const {id, timestamp, first, last, email, message} = req.body;
     const dbQuery = "INSERT INTO info_db VALUES (?, ?, ?, ?, ?, ?)";
@@ -105,10 +135,25 @@ app.post('/api/add', (req, res) => {
     })
 });
 
-//get messages that user sent for their profile
+//get method to retrieve user data from user_db
+app.get('/admin/all', (req, res) => {
+    console.log(`endpoint hit`);
+    const dbQuery = 'SELECT * FROM user_db ORDER BY timestamp';
+    db.query(dbQuery, (error, result) => {
+        if(error){
+            console.log(`error getting user data from the db`, error);
+        } else if(result.length === 0){
+            console.log(`No users in the db`);
+            res.send({ error: `no users in the user_db`});
+        } else {
+            console.log(result);
+            res.send(result);
+        }
+    })
+})
 
+//get messages that user sent for their profile
 app.get('/api/get/:email', (req, res) => {
-    console.log(`here`);
     const {email} = req.params;
     const dbQuery = "SELECT * FROM info_db WHERE EMAIL=? ORDER BY timestamp DESC";
     db.query(dbQuery, email, (error, result) => {
@@ -124,7 +169,6 @@ app.get('/api/get/:email', (req, res) => {
 })
 
 //add get method for login and Create Account
-
 app.get('/user/get/:email/:password', (req, res) => {
     const { email, password } = req.params;
     const getEmail = "SELECT * FROM user_db WHERE email=?";
@@ -156,6 +200,7 @@ app.get('/user/get/:email/:password', (req, res) => {
     })
 });
 
+//method to get a user by specific id
 app.get('/user/get/:id', (req, res) => {
     const {id} = req.params;
     const dbQuery = "SELECT * FROM user_db WHERE id=?";
@@ -168,7 +213,6 @@ app.get('/user/get/:id', (req, res) => {
 })
 
 //add Post method for Create Account
-
 app.post('/user/add', (req, res) => {
     console.log(req.body);
     const { id, first, last, email, password, admin } = req.body;
@@ -188,7 +232,6 @@ app.post('/user/add', (req, res) => {
 });
 
 //add PUT method to update forgotten password
-
 app.put('/user/put/:id', (req, res) => {
     const {id} = req.params;
     const {password} = req.body;
@@ -208,15 +251,12 @@ app.put('/user/put/:id', (req, res) => {
     })
 });
 
-//add PUT method to update user info
-
+//add PUT method to update user inf0
 app.put('/user/:id', (req, res) => {
     const {id} = req.params;
     const oEmail = req.body.user.email;
     // const {first, last, email, password} = req.body.user
     const {first, last, email, password} = req.body.formData;
-    console.log(id, first, last, email, password);
-    console.log( oEmail);
     bcrypt.hash(password, saltRounds).then((hashedPassword) => {
         const dbQuery = `UPDATE user_db as u, info_db as i 
                             SET u.first=?, i.first=?, u.last=?, i.last=?, u.email=?, i.email=?, u.password=? 
@@ -237,8 +277,38 @@ app.put('/user/:id', (req, res) => {
         })
     })
 
-})
+});
 
+//method to add account creation instance to account_status
+app.put(`/user/account/add`, (req, res) => {
+    console.log(req.body);
+    const {user, id} = req.body;
+    let dbQuery = `INSERT INTO account_status VALUES(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)`;
+    db.query(dbQuery, [id, user.active, user.id, user.first, user.last, user.email, user.deleteStamp], (error, result) => {
+        if(error){
+            console.log(`there was an error entering into the db`, error);
+        } else {
+            res.send(result);
+        }
+    })
+})
+//method to add deleted user to the deletion table ----- may me not necessary
+app.put(`/delete/add`, (req, res) => {
+    let {id, user} = req.body;
+    console.log(user);
+    console.log(id);
+    let dbQuery = `INSERT INTO deletion_table VALUES(?, CURRENT_TIMESTAMP, ?, ?, ?, ?)`;
+    db.query(dbQuery, [id, user.id, user.first, user.last, user.email], (error, result) => {
+        if(error) {
+            console.log(`there was an error entering into db`, error);
+        } else {
+            let deletedUser = {id: id, userId: user.id, first: user.first, last: user.last, email: user.email}
+            res.send(deletedUser);
+        }
+    })
+});
+
+//delete user from the user_db table
 app.delete(`/delete/:id`, (req, res) => {
     const {id} = req.params;
     const dbQuery = "DELETE FROM user_db WHERE id=?";
@@ -251,9 +321,22 @@ app.delete(`/delete/:id`, (req, res) => {
             res.send({deleteMessage: `Your account was deleted! We are sad to see you go, please come back soon!`})
         }
     })
+});
+
+//method to update the account_status table upon deletion of account
+app.put(`/user/account/delete`, (req, res) => {
+    const {id, active} = req.body;
+    const dbQuery = `UPDATE account_status SET account_status=?, timestamp_deleted=CURRENT_TIMESTAMP WHERE account_id=?`
+    db.query(dbQuery, [active, id], (error, result) => {
+        if(error){
+            console.log(`there was an error updating account status`, error);
+        } else {
+            res.send(result);
+        }
+    })
 })
 
-
+//test method
 app.get('/api/hello', (req, res) => {
     res.send({ express: "Hello from express!"});
 });

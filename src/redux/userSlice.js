@@ -44,7 +44,7 @@ export const getTotalUserCountAsync = createAsyncThunk(
             console.log(`Error with the usercount fetch on user slice`);
         }
     }
-)
+);
 
 export const updateUserPasswordAsync = createAsyncThunk(
     '/user/updateUserPasseordAsync',
@@ -62,7 +62,7 @@ export const updateUserPasswordAsync = createAsyncThunk(
             return { userInfo }
         }
     }
-)
+);
 
 export const createUserAsync = createAsyncThunk(
     '/user/add',
@@ -93,6 +93,33 @@ export const createUserAsync = createAsyncThunk(
     }
 );
 
+export const addUserToAccountTrackAsync = createAsyncThunk(
+    '/user/account/addUserToAccountTrackAsync',
+    async(payload) => {
+        const id = nanoid();
+        let user = payload;
+        user.active = true;
+        user.deleteStamp = "NA";
+        const response = await fetch(`http://localhost:5000/user/account/add`,
+        {
+            method: 'PUT',
+            headers: {
+                'content-type' : 'application/json',
+            },
+            body: JSON.stringify({
+                user: user,
+                id: id
+            })
+        })
+        if(response.ok){
+            const result = await response.json();
+            return result
+        } else {
+            console.log(`error in the fetch on the user slice`);
+        }
+    }
+);
+
 export const updateUserAsync = createAsyncThunk(
     '/user/updateUserAsync',
     async(payload) => {
@@ -114,6 +141,53 @@ export const updateUserAsync = createAsyncThunk(
         }
 );
 
+export const addDeletedUserAsync = createAsyncThunk(
+    '/delete/addDeletedUserAsync',
+    async(payload) => {
+        let user = payload;
+        const id = nanoid();
+        const response = await fetch(`http://localhost:5000/delete/add`,
+        {
+            method: 'PUT',
+            headers: {
+                'content-type' : 'application/json',
+            },
+            body: JSON.stringify({
+                                id: id,
+                                user: user
+                                })
+        })
+        if(response.ok){
+            const result = await response.json();
+
+        }
+    }
+);
+
+export const updateAccountStatusAsync = createAsyncThunk(
+    '/user/account/updateAccountStatusAsync',
+    async(payload) => {
+         console.log(payload);
+         const response = await fetch(`http://localhost:5000/user/account/delete`,
+         {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: payload.id,
+                active: false
+            })
+         })
+         if(response.ok){
+            const result = await response.json();
+            return result
+         } else {
+            console.log(`error in the fetch on the user slice`)
+         }
+    }
+);
+
 export const deleteUserAsync = createAsyncThunk(
     '/user/deleteUserAsync',
     async(payload) => {
@@ -123,12 +197,12 @@ export const deleteUserAsync = createAsyncThunk(
             method: 'DELETE'
         })
         if(response.ok){
-            console.log(`user ${payload.user.userInfo.first} ${payload.user.userInfo.falslast} was deleted`);
+            console.log(`user ${payload.user.userInfo.first} ${payload.user.userInfo.last} was deleted`);
             const result = await response.json();
             return {result}
         }
     }
-)
+);
 
 
 const initialState = { 
@@ -250,6 +324,12 @@ const userSlice = createSlice({
             console.log("Fetching user count");
         },
         [getTotalUserCountAsync.fulfilled]: (action, state) => {
+            return action.payload
+        },
+        [addDeletedUserAsync.pending]: (state, action) => {
+            console.log(`adding deleted user information...`);
+        },
+        [addDeletedUserAsync.fulfilled]:(state, action) => {
             return action.payload
         },
         [deleteUserAsync.pending]: (action, state) => {

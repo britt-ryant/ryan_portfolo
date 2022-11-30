@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import Dialog from '@mui/material/Dialog';
 
 //import redux components
-import { createUserAsync, editAccountFormReducer, getUserDataAsync, setState, updateUserAsync } from '../../redux/userSlice';
+import { createUserAsync, editAccountFormReducer, getUserDataAsync, setState, updateUserAsync, addUserToAccountTrackAsync } from '../../redux/userSlice';
 import { addInfoAsync, renderReducer, setMessageState } from '../../redux/formSlice';
 
 //imoprt emailjs --> email service
@@ -95,6 +95,7 @@ const FormDialog = (props) => {
                         console.log("dispatching create user");
                         dispatch(createUserAsync(formData)).then((data) => {
                             let userData = data.payload.newUser;
+                            dispatch(addUserToAccountTrackAsync(userData))
                             callSuccessToast(`Welcome ${formData.first} ${formData.last}!`)
                             dispatch(setState(userData));
                         });

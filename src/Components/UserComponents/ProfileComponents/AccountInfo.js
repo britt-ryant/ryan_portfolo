@@ -14,6 +14,7 @@ import {
     Grid,
     IconButton,
     TextField,
+    Box
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -72,11 +73,7 @@ class AccountInfo extends React.Component{
         return(
             <div>
             <Paper sx={{
-                        // width: ['90%', '50%', '50%'],
-                        // minWidth: '50%', 
-                        // height: '50%',
                         border:2,
-                        // minWidth: '50%',
                         p: 2,
                         paddingTop: 5,
                         flexDirection: 'column',
@@ -85,19 +82,30 @@ class AccountInfo extends React.Component{
                         boxShadow: 20
                         }}>
                 <Stack>
-                    <Typography 
-                                noWrap
-                                component="h2" 
+                    <Box 
+                        sx={{display: 'flex'}}>
+                        <Typography 
+                                    noWrap
+                                    component="h2" 
+                                    sx={{
+                                        p: 1,
+                                        paddingBottom:0,
+                                    }}
+                                    variant="h4" 
+                                    color="primary" 
+                                    gutterBottom
+                                >
+                                    {firstName} {lastName}
+                        </Typography>
+                        <IconButton
                                 sx={{
-                                    p: 1,
-                                    paddingBottom:0,
-                                }}
-                                variant="h4" 
-                                color="primary" 
-                                gutterBottom
-                            >
-                                {firstName} {lastName}
-                    </Typography>
+                                    marginLeft: 'auto',
+                                    marginRight: '2.5%',
+                                }} 
+                                onClick={this.editAccount}>
+                                <EditIcon />
+                        </IconButton>
+                    </Box>
 
                     <Typography 
                                 component="h5" 
@@ -149,9 +157,7 @@ class AccountInfo extends React.Component{
                         </IconButton>
                     </Grid>
                     <Divider />
-                        <IconButton onClick={this.editAccount}>
-                            <EditIcon />
-                        </IconButton>
+                   
                         {this.props.user.renderForm.editAccount ? <FormDialog
                                                                         handleFormClose={this.handleFormClose} 
                                                                         successToast={this.props.successToast} 

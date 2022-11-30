@@ -1,7 +1,7 @@
 import React from 'react';
 
 //import redux components
-import { connect, useDispatch } from 'react-redux';
+import {connect} from 'react-redux';
 import { getAllMessagesAsync, getMessagesByUserAsync, renderReducer } from '../../../redux/formSlice';
 import {PURGE} from 'redux-persist';
 
@@ -17,18 +17,38 @@ import {
     TableHead,
     TableCell,
     TableBody,
-    withStyles
+    withStyles,
+    Box,
+    SwipeableDrawer,
+    styled,
+    IconButton,
+    Collapse,
+    CardContent
         } from '@mui/material';
+    import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 //import components
 import FormDialog from '../../FormComponents/FormDialog';
 import toast from 'react-hot-toast';
+import SearchBar from './SearchBar'; 
 
 
 
 const stateToProps = (state) => {
     return state
-}
+};
+
+const ExpandMore = styled((props) => {
+    const {expand, ...other} = props;
+    return <IconButton {...other} />
+})(({theme, expand}) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    })
+}));
+
 
 
 class MessageComponent extends React.Component{
@@ -39,17 +59,17 @@ class MessageComponent extends React.Component{
             loading: true,
             startIndex: 0,
             cutOff: 5,
-            hideButton: true
+            hideButton: true,
+            expand: false
         }
         this.addMoreMessages = this.addMoreMessages.bind(this);
         this.hideMessages = this.hideMessages.bind(this);
+        this.toggleExpand = this.toggleExpand.bind(this);
+        this.searchResults = this.searchResults.bind(this);
         // this.handleFormClose = this.handleFormClose.bind(this);
         //this.purgeState = this.purgeState.bind(this);
     }
     componentDidMount(){
-        // if(this.state.messages){
-        //     return
-        // } 
         const { dispatch } = this.props;
         let email = this.props.user.userInfo.email;
         let query = null;
@@ -96,7 +116,6 @@ class MessageComponent extends React.Component{
 
     componentDidUpdate(prevProps, prevState){
        if(prevProps.form.data !== this.props.form.data){
-            console.log(this.state);
             if(this.state.renderMessages){
                 if(this.state.startIndex === 0 && this.state.cutOff === 5){
                     let oldMessages = this.state.renderMessages.filter((value, i) => i !== 4);
@@ -145,6 +164,17 @@ class MessageComponent extends React.Component{
                   }
             }
         }
+    };
+
+    searchResults(results){
+        if(results.error){
+            this.setState({
+                loading: false,
+                error: results.error
+            })
+        } else {
+            this.setState({messages: results, error: false})
+        }
     }
 
     addMoreMessages(){
@@ -161,6 +191,9 @@ class MessageComponent extends React.Component{
         }
     }
 
+    toggleExpand(event){
+        this.setState({expand: !this.state.expand});
+     }   
     changeRenderList(firstFive, lastFive, array){
         this.setState({
             startIndex: firstFive,
@@ -181,11 +214,6 @@ class MessageComponent extends React.Component{
             hideButton: false
         })
     };
-
-    // handleFormClose(){
-    //     const {dispatch} = this.props;
-    //     dispatch(renderReducer());
-    // }
 
     renderItems(message){
         switch(message.length){
@@ -235,7 +263,6 @@ class MessageComponent extends React.Component{
                         flexDirection: 'column',
                         width: '100%',
                         boxShadow: 20
-
                 }}>
                 <Typography 
                        noWrap
@@ -249,9 +276,32 @@ class MessageComponent extends React.Component{
                        color="primary" 
                        gutterBottom
                     >
-                        Recent Messages Sent:
+                        Recent Messages {this.state.user.admin ? "Received" : "Sent"}:
                 </Typography>
                 <Divider />
+                <Box 
+                    sx={{
+                        textAlign: 'left'
+                    }}>
+                <ExpandMore
+                        expand={this.state.expand}
+                        onClick={this.toggleExpand}
+                        aria-expanded={this.state.expand}
+                        aria-label="show more"
+                        >
+                    <ExpandMoreIcon />
+                </ExpandMore>
+                <Collapse in={this.state.expand} timeout="auto" unmountOnExit>
+                    <CardContent>
+                        <Box sx={{
+                                gridTemplateColumns: 'repeat(3, 1fr)',
+                                display: 'grid'}}>
+                            <SearchBar  searchResults={this.searchResults}/>
+                        </Box>
+
+                    </CardContent>
+                </Collapse>
+                </Box>
                 <Table size="small">
                     {/* {this.renderTemplate()} */}
                     <TableHead>
@@ -268,14 +318,14 @@ class MessageComponent extends React.Component{
                         {!this.state.loading && !this.state.error && this.state.renderMessages ? this.renderItems(this.state.renderMessages) : null}
                         {this.state.loading ? 
                         <TableRow key={46}>
-                            <TableCell colSpan={3}>
+                            <TableCell colSpan={this.state.admin ? 6 : 3}>
                             Loading...
                             </TableCell>
                         </TableRow> 
                             : null}
                         {!this.state.loading && this.state.error ? 
                             <TableRow key={47}>
-                                <TableCell colSpan={3}>
+                                <TableCell  colSpan={this.state.admin ? 6 : 3} >
                                 {this.state.error}
                                 </TableCell>
                             </TableRow> 

@@ -10,7 +10,7 @@ import {
         TextField,
         Stack
 } from '@mui/material';
-import { deleteAccountReducer, deleteUserAsync } from '../../../redux/userSlice';
+import { deleteAccountReducer, deleteUserAsync, addDeletedUserAsync, updateAccountStatusAsync } from '../../../redux/userSlice';
 import { Box } from '@mui/system';
 import toast from 'react-hot-toast';
 import { adminLogOutReducer } from '../../../redux/adminSlice';
@@ -55,12 +55,14 @@ class AreYouSure extends React.Component{
                     resolve(this.props.handleRedirect())
                 }).then(() => {
                     toast.success(`Your account was successfully deleted!`);
-                    dispatch(deleteUserAsync(this.props));
-                    dispatch(deleteAccountReducer());
-                    dispatch(adminLogOutReducer());
+                    dispatch(addDeletedUserAsync(this.props.user.userInfo)).then(() =>{
+                        dispatch(updateAccountStatusAsync(this.props.user.userInfo)).then(()=>{
+                            dispatch(deleteUserAsync(this.props));
+                            dispatch(deleteAccountReducer());
+                            dispatch(adminLogOutReducer());     
+                        })
+                    })
                 })
-
-
 
             } else {
                 this.setState({error: true});
@@ -100,7 +102,7 @@ class AreYouSure extends React.Component{
                         >
                             <Stack spacing={5} direction='column' sx={{p:5}}>
                             <Typography align='center' gutterBottom variant='h4' component='div'>Delete Account</Typography>
-                            <Typography align='center' gutterBottom variant='p' component='div'>Are you sure you want to permanently delete your account? If so, type "delete and press submit.</Typography>
+                            <Typography align='center' gutterBottom variant='p' component='div'>Are you sure you want to permanently delete your account? If so, type "delete" and press submit.</Typography>
                             <TextField 
                                     error={this.state.error}
                                     id='outlined-basic 10'
