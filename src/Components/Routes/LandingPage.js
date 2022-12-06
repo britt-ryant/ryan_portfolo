@@ -3,7 +3,8 @@
 import React, { useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Element, Events, scroller, animateScroll as scroll } from 'react-scroll';
-import NavBar from '../NavBar';
+import NavBar from '../../ComponentsUnused/NavBar';
+import NavMenu from '../NavMenu';
 import { renderReducer, resetFormDataReducer } from '../../redux/formSlice';
 import { logInFormReducer, createAccountFormReducer, logOut } from '../../redux/userSlice';
 import { connect } from 'react-redux';
@@ -18,6 +19,7 @@ import SectionOne from './Elements/SectionOne';
 import SectionTwo from './Elements/SectionTwo';
 import SectionThree from './Elements/SectionThree';
 import SectionFour from './Elements/SectionFour';
+import SectionTwoRe from './Elements/SectionTwoRe';
 import { adminLogOutReducer } from '../../redux/adminSlice';
 
 const stateToProps = (state) => {
@@ -30,6 +32,10 @@ const LandingPage = (props, ref) => {
         event.preventDefault();
         dispatch(renderReducer()); 
     };
+
+    // React.useEffect(() => {
+    //     console.log(props);
+    // },[])
 
     const handleLogOutClick = (event) => {
         console.log('Log Out Button Clicked!');
@@ -97,7 +103,12 @@ const LandingPage = (props, ref) => {
                 position='top-left'
                 reverseOrder={true}
                />
-            <NavBar handleFormClick={handleFormClick} handleLogInRenderClick={handleLogInRenderClick} handleLogOutClick={handleLogOutClick}/>
+            {/* <NavBar size={props.size} handleFormClick={handleFormClick} handleLogInRenderClick={handleLogInRenderClick} handleLogOutClick={handleLogOutClick}/> */}
+            <NavMenu  
+                handleFormClick={handleFormClick}
+                handleLogInRenderClick={handleLogInRenderClick}
+                handleLogOutClick={handleLogOutClick}
+            />
             <div className='outer-form-container'>
                 {props.form.renderForm? <FormDialog 
                                                 handleFormClose={handleFormClose} 
@@ -111,10 +122,11 @@ const LandingPage = (props, ref) => {
                                                             successToast={successToast} 
                                                             handleLogInRenderClick={handleLogInRenderClick} /> : <div></div>}
             </div>
-            <Element name='section-one' ><SectionOne /></Element>
-            <Element name='section-two' className='element'><SectionTwo /></Element>
-            <Element name='section-three' className='element'><SectionThree /></Element>
-            <Element name='section-four' className='element'><SectionFour /></Element>
+            {/* <h1>Test</h1> */}
+            <Element name='section-one' className='element one'><SectionOne /></Element>
+            <Element name='section-two' className='element two'><SectionTwoRe /></Element>
+            <Element name='section-three' className='element three'><SectionThree /></Element>
+            <Element name='section-four' className='element four'><SectionFour /></Element>
             <Element name='footer'><Footer /></Element>
     </div>
     )

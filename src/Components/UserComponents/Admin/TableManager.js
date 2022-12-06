@@ -83,7 +83,6 @@ const TableManager = () => {
                             autoHeight={true}
                             rows={loading ? loadingMessage : users}
                             columns={columns}
-                            
                             />
                     </Paper>
             </Container>

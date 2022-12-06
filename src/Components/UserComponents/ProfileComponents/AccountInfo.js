@@ -75,7 +75,7 @@ class AccountInfo extends React.Component{
             <Paper sx={{
                         border:2,
                         p: 2,
-                        paddingTop: 5,
+                        paddingTop: 2,
                         flexDirection: 'column',
                         display: 'flex',
                         textAlign: 'left',
