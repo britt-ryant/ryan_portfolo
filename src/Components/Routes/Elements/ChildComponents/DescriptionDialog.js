@@ -70,7 +70,7 @@ class DescriptionDialog extends React.Component{
             case "MySQL":
                 this.setState({description: "MySQL is an open-source relational database management system. Its name is a combination of 'My', the name of co-founder Michael Widenius's daughter My, and 'SQL', the abbreviation for Structured Query Language. "})
                 return ;
-            case "nodeJS":
+            case "NodeJS":
                 this.setState({ description: "Node.js is an open-source server environment. Node.js is cross-platform and runs on Windows, Linux, Unix, and macOS. Node.js is a back-end JavaScript runtime environment. Node.js runs on the V8 JavaScript Engine and executes JavaScript code outside a web browser. "})
                 return;
             case "PostgreSQL":
@@ -116,7 +116,7 @@ class DescriptionDialog extends React.Component{
                         height="100vh" 
                         draggable={false}
                         alt="logo" />
-                    <Typography variant="h2">{this.state.title}</Typography>
+                    <Typography variant="h3">{this.state.title}</Typography>
                     <Typography sx={{width: '80%', display: 'inline-block', p: 2}}>{this.state.description ? this.state.description : "No desc. loaded...." }</Typography>
                     <Typography variant="caption" sx={{display: 'inline-block'}}>Descriptions are from Wikipedia.com</Typography>
                 </Paper>

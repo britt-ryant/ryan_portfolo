@@ -3,7 +3,7 @@ import React from 'react';
 //import anitmation components
 import { motion, useMotionValue, useSpring, domAnimation, LazyMotion, m} from 'framer-motion';
 
-import { distance} from '@popmotion/popcorn';
+import { distance } from '@popmotion/popcorn';
 
 //import child components
 import DescriptionDialog from '../Elements/ChildComponents/DescriptionDialog';
@@ -26,7 +26,6 @@ import aws from '../../../images/logos/aws.png';
 import cSharp from '../../../images/logos/cSharp.png';
 //import express from '../../../images/logos/express.png';
 import java from '../../../images/logos/java.png';
-import lambda from '../../../images/logos/lambda.png';
 import mySQL from '../../../images/logos/mySQL.png';
 import nodeJs from '../../../images/logos/nodeJs.png';
 import postgreSQL from '../../../images/logos/postgreSQL.png';
@@ -63,10 +62,8 @@ const data = [
     ]
 ]
 
-const size = 150;
-const gap = 20;
 
-const Square = ({ active, setActive, colIndex, rowIndex, x, y, imgComp, setComp }) => {
+const Square = ({ size, gap, active, setActive, colIndex, rowIndex, x, y, imgComp, setComp }) => {
     const isDragging = colIndex === active.col && rowIndex === active.row;
     const d = distance(
       { x: active.col, y: active.row },
@@ -110,7 +107,12 @@ const Square = ({ active, setActive, colIndex, rowIndex, x, y, imgComp, setComp 
 }
 const SectionTwoRe = (props) => {
     const [active, setActive] = React.useState({row: 0, col: 0});
-    const [comp, setComp] = React.useState({imgComp: null})
+    const [comp, setComp] = React.useState({imgComp: null});
+    const [windowSize, setWindowSize] = React.useState({x: window.innerWidth, y: window.innerHeight})
+    const [size, setSize] = React.useState(150);
+    const [gap, setGap] = React.useState(10);
+    const [mobile, setMobile] = React.useState(false);
+
     const x = useMotionValue(0);
     const y = useMotionValue(0);
     const bounceTransition = {
@@ -120,26 +122,41 @@ const SectionTwoRe = (props) => {
             ease: "easeOut",
         }
     }
+
+    React.useEffect(()=> {
+        // windowResize();
+        if(windowSize.x <= 680){
+            setMobile(true);
+            setSize(75);
+            setGap(5)
+        } else {
+            setMobile(false);
+            setSize(150);
+            setGap(20)
+        }  
+        return window.onresize = windowResize
+    }, [window.innerWidth])
+
+
     const handleWindowClose = () => {
         setComp({imgComp: null})
+    };
+    
+    const windowResize = () => {
+        setWindowSize({
+            x: window.innerWidth,
+            y: window.innerHeight
+        })
     }
-    React.useEffect(()=>{
-    }, [comp])
     return (
         <div className="app">
             {comp.imgComp !== null ? <DescriptionDialog handleWindowClose={handleWindowClose} comp={comp} /> : null}
         <div 
-            className='ins-container'
-                style={{
-                    width: '20%',
-                    position: 'absolute',
-                    marginTop: '20vh',
-                    marginLeft: '5%'
-                }}>
+            className='ins-container'>
                 <motion.div
                     transition={bounceTransition}
                     animate={{
-                        y: ["100%", "-100%"],
+                        y: ["400%", "-10%"],
                     }}>
                         <Typography sx={{color: '#d6d6d6'}}>Drag and drop logo for details</Typography>
                 </motion.div>
@@ -148,7 +165,7 @@ const SectionTwoRe = (props) => {
             initial={{opacity: 0, scale: 0.5}}
             animate={{opacity: 1, scale: 1}}
             transition={{ duration: 2, ease: "easeOut" }}
-            style={{ width: "100%", height: "100%" }}
+            // style={{ width: "80%", border: "2px solid black"}}
         >
           <motion.div
             style={{
@@ -157,7 +174,7 @@ const SectionTwoRe = (props) => {
             height: (size + gap) * 4 - gap,
             top: "50%",
             left: "50%",   
-            transform: 'translate(-50%, 15%)',
+            transform: `translate(-50%, ${mobile ? '45%' : '15%'})`,
             position: "relative",
             perspective: 1000
             }}
@@ -165,6 +182,8 @@ const SectionTwoRe = (props) => {
             {data.map((row, rowIndex) => 
                 row.map((item, colIndex) => (
                     <Square
+                        size={size}
+                        gap={gap}
                         x={x}
                         y={y}
                         active={active}
@@ -178,6 +197,7 @@ const SectionTwoRe = (props) => {
                 )))}
           </motion.div>
         </motion.div>
+     
       </div>
     )
 }
