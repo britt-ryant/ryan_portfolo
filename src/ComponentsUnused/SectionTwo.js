@@ -1,22 +1,22 @@
 import React from 'react';
 
-//import tech logos
-import amazonBucket from '../../../images/logos/amazonBuckets.png';
-import apacheSpark from '../../../images/logos/apacheSpark.png';
-import aws from '../../../images/logos/aws.png';
-import cSharp from '../../../images/logos/cSharp.png';
-import expressJS from '../../../images/logos/express.png';
-import java from '../../../images/logos/java.png';
-import lambda from '../../../images/logos/lambda.png';
-import mySQL from '../../../images/logos/mySQL.png';
-import nodeJs from '../../../images/logos/nodeJs.png';
-import postgreSQL from '../../../images/logos/postgreSQL.png';
-import python from '../../../images/logos/python.png';
-import rails from '../../../images/logos/rails.png';
-import ruby from '../../../images/logos/ruby.png';
-import react from '../../../images/logos/react.png';
-import redux from '../../../images/logos/redux.png';
-import github from '../../../images/logos/github.png';
+// //import tech logos
+// import amazonBucket from '../../../images/logos/amazonBuckets.png';
+// import apacheSpark from '../../../images/logos/apacheSpark.png';
+// import aws from '../../../images/logos/aws.png';
+// import cSharp from '../../../images/logos/cSharp.png';
+// import expressJS from '../../../images/logos/express.png';
+// import java from '../../../images/logos/java.png';
+// import lambda from '../../../images/logos/lambda.png';
+// import mySQL from '../../../images/logos/mySQL.png';
+// import nodeJs from '../../../images/logos/nodeJs.png';
+// import postgreSQL from '../../../images/logos/postgreSQL.png';
+// import python from '../../../images/logos/python.png';
+// import rails from '../../../images/logos/rails.png';
+// import ruby from '../../../images/logos/ruby.png';
+// import react from '../../../images/logos/react.png';
+// import redux from '../../../images/logos/redux.png';
+// import github from '../../../images/logos/github.png';
 
 //import MUI components
 import {
@@ -39,22 +39,22 @@ class SectionTwo extends React.Component {
         super(props);
         this.state = {
             techLogos: [    
-                        {component: amazonBucket, name: 'Amazon S3'},
-                        {component: lambda, name: 'AWS Lambda'},
-                        {component: aws, name: 'AWS'},
-                        {component: apacheSpark, name: 'Apache Spark'},
-                        {component: cSharp, name: 'C#'},
-                        {component: expressJS, name: 'ExpressJS'},
+                        // {component: amazonBucket, name: 'Amazon S3'},
+                        // {component: lambda, name: 'AWS Lambda'},
+                        // {component: aws, name: 'AWS'},
+                        // {component: apacheSpark, name: 'Apache Spark'},
+                        // {component: cSharp, name: 'C#'},
+                        // {component: expressJS, name: 'ExpressJS'},
                         // {component: html, name: 'Html JavaScript Css'},
-                        {component: java, name: 'Java'},
-                        {component: mySQL, name: 'MySQL'},
-                        {component: nodeJs, name: 'NodeJS'},
-                        {component: postgreSQL, name: 'PostgreSQL'},
-                        {component: python, name: "Python"},
-                        {component: ruby, name: 'Ruby'},
+                        // {component: java, name: 'Java'},
+                        // {component: mySQL, name: 'MySQL'},
+                        // {component: nodeJs, name: 'NodeJS'},
+                        // {component: postgreSQL, name: 'PostgreSQL'},
+                        // {component: python, name: "Python"},
+                        // {component: ruby, name: 'Ruby'},
                         // {component: rails, name: 'Rails'},
-                        {component: react, name: 'React'},
-                        {component: redux, name: 'Redux'},
+                        // {component: react, name: 'React'},
+                        // {component: redux, name: 'Redux'},
                         // {component: github, name: 'GitHub'}
                     ]
         }

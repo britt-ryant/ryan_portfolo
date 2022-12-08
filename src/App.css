@@ -95,9 +95,6 @@ html{
   box-shadow: var(--box-shadow);
 
 }
-.logo{
-
-}
 .wrapper{
   /* border: 2px solid black; */
   height: 100vh;
@@ -105,32 +102,31 @@ html{
   display: flex;
 }
 .test-motion{
-  /* border: 2px solid black; */
   width: 75vw;
 }
 .subtitle-motion{
   margin-top: 7%;
 }
 .line-container{
-  /* border: 2px solid black; */
-  /* z-index: 10; */
   margin-top: -2.5%;
   width: 75%;
 }
 
 .base-container{
   border: 2px solid black;
-
-  /* position: absoluteLi; */
-  /* position: relative; */
-
-  /* display: flex; */
+}
+.react-pdf__Page__canvas {
+  margin: 0 auto;
+  width: 90%;
+  /* height: 100% !important; */
 }
 
-.splash{
-  /* height: 10vher; */
+.react-pdf__Page__textContent{
+  display: none;
 }
-
+.react-pdf__Page__annotations{
+  display: none;
+}
 /* Background styling specifically for section-one */
 div.one{
   background-image: url('images/sunset.jpeg');
@@ -139,8 +135,6 @@ div.one{
 /* Background styling specifically for section-two */
 div.two{
   background-image: url('images/codescreenshot.jpg');
-
-
 }
 /* Styling div specific for the descrition of tech */
 div.three {
@@ -154,6 +148,10 @@ div.four {
 .App-link {
   color: #61dafb;
 }
+.stack-container{
+  height: 90vh;
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -175,6 +173,9 @@ div.four {
   .subtitle-motion{
     margin-top: 20%;
   }
+  .react-pdf__Page__canvas{
+    width: auto;
+  }
 
   .two{
     background-position:left;
@@ -183,6 +184,10 @@ div.four {
   .main-page-desc{
     margin-top: 80%;
     font-size: x-small;
+  }
+  .stack-container{
+    height: 60vh;
+    margin-left: 15;
   }
   
 }

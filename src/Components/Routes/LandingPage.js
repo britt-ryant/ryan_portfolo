@@ -16,7 +16,7 @@ import FormDialog from '../FormComponents/FormDialog';
 
 //Landing Page section imports 
 import SectionOne from './Elements/SectionOne';
-import SectionTwo from './Elements/SectionTwo';
+import SectionTwo from '../../ComponentsUnused/SectionTwo';
 import SectionThree from './Elements/SectionThree';
 import SectionFour from './Elements/SectionFour';
 import SectionTwoRe from './Elements/SectionTwoRe';
