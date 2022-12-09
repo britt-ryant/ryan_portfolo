@@ -52,16 +52,20 @@ class DescriptionDialog extends React.Component{
         return (
             // <React.Fragment>
             <div style={{width: '95%', display: 'inline-block'}}>
-                <img
-                    src={data.image} 
-                    width="100%"
-                    draggable={false}
-                    alt="logo"
+                <Box sx={{boxShadow: 20, p: 2}}>
+                    <img
+                        src={data.image} 
+                        width="100%"
+                        alt="logo"
+                        draggable={false}
                     />
+
+                </Box>
                     <Box
                         sx={{
                             textAlign: 'left',
-                            marginBottom: 2
+                            marginBottom: 2,
+                            marginTop: 1
                             // paddingLeft: 2
                         }}>
                         <Typography

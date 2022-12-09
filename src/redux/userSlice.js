@@ -23,11 +23,10 @@ export const getUserDataAsync = createAsyncThunk(
 export const getUserByIdAsync = createAsyncThunk(
     '/user/getUserByIdAsync', 
     async(payload) => {
-        let id = payload.id;
+        let id = payload;
         const response = await fetch(`http://localhost:5000/user/get/${id}`)
         if(response.ok){
             let userInfo = await response.json();
-            console.log(userInfo);
             return {userInfo}
         }
     }
@@ -297,6 +296,11 @@ const userSlice = createSlice({
         },
         [getUserByIdAsync.fulfilled]: (state, action) => {
             console.log(action);
+            new Promise((resolve, reject) => {
+                resolve(state.userInfo.id = action.payload.userInfo[0].id)
+            }).then((data) => {
+                console.log(data);
+            })
         },
         [updateUserPasswordAsync.pending]: (state, action) => {
             console.log("updating user password");

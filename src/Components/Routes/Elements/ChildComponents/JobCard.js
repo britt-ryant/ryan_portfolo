@@ -60,15 +60,15 @@ const JobCard = (props) => {
                 transition: {duration: 0.2}
             }}>
                 <Paper
-                    sx={{height: ["30vh","55vh"], width: ["50vw", "30vw"], borderRadius: '5%', p: 4}}>
+                    sx={{height: [300, 350, 415], width: [200, 300, 350], borderRadius: '5%', p: 6}}>
                         <Box 
-                            sx={{boxShadow: 10}}>
+                            sx={{boxShadow: 10, p: 2, paddingLeft: 0, paddingRight: 0}}>
                         <img
-                            style={{ width: '90%', padding: '5%'}}
+                            className='card-image'
+                            style={{width: '90%'}}
                             src={props.cardContents.image}
                             alt="logo"
                             draggable={false}/>
-
                             </Box>
                         <Divider />
                         <Typography
@@ -101,7 +101,7 @@ const JobCard = (props) => {
                             disabled={false}
                             size="small"
                             variant="outlined"
-                            sx={{boxShadow: 5, marginTop: ['2%', '10%']}}
+                            sx={{boxShadow: 5, marginTop: ['10%', '3vh']}}
                             onClick={props.renderDialog}
                             >Description</Button>
                 </Paper>

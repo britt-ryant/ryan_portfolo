@@ -14,7 +14,7 @@ import NotFound from './NotFound';
 import SideBar from './UserComponents/SideBar';
 import FormDialog from './FormComponents/FormDialog';
 import DevForm from '../DevComponents/DevForm';
-import { createAccountFormReducer } from '../redux/userSlice';
+import { createAccountFormReducer, getUserByIdAsync } from '../redux/userSlice';
 
 const stateToProps = (state) => {
     return state
@@ -27,11 +27,19 @@ class PageRouter extends React.Component{
         this.state = {
             ...this.props,
             id: this.props.user.userInfo.id,
+            resetId: window.location.pathname.substring(7),
+            loaded: false
         };
     };
 
-  componentDidMount(){
-    //console.log(this.state);
+  componentWillMount(){
+    const pathname = window.location.pathname;
+    const id = pathname.substring(7);
+    console.log(id);
+    const {dispatch} = this.props;
+    dispatch(getUserByIdAsync(id)).then((data)=>{
+        console.log(data);
+    })
   }
 
 
@@ -42,7 +50,7 @@ class PageRouter extends React.Component{
                     <Routes>
                         <Route path='/' element={<LandingPage/>} />
                         <Route path='/passwordreset' element={<ForgotPassword />} />
-                        <Route exact path={`/reset/${this.props.user.userInfo.id}`} element={<ForgotPassword />} />
+                        <Route path={`/reset/${this.state.resetId}`} element={<ForgotPassword />} />
                         <Route  path={`/profile/${this.props.user.userInfo.id}`} element={<SideBar setEditAccountInfo={this.setEditAccountInfo} />} />
                         {/* <Route path={`/edit/${this.props.user.userInfo.id}`} element={<FormDialog 
                                                                                         handleFormClose={this.handleFormClose} 

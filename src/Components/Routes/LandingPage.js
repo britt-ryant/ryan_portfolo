@@ -126,7 +126,7 @@ const LandingPage = (props, ref) => {
             <Element name='section-one' className='element one'><SectionOne /></Element>
             <Element name='section-two' className='element two'><SectionTwoRe /></Element>
             <Element name='section-three' className='element three'><SectionThree /></Element>
-            <Element name='section-four' className='element four'><SectionFour /></Element>
+            {/* <Element name='section-four' className='element four'><SectionFour /></Element> */}
             <Element name='footer'><Footer /></Element>
     </div>
     )

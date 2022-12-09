@@ -25,7 +25,7 @@ import {
 
 import MenuIcon from '@mui/icons-material/Menu';
 
-const navBarItems = ['Home', 'Tech', 'History', 'Goals', 'Contact'];
+const navBarItems = ['Home', 'Tech', 'History', 'Contact'];
 const userAvatarItems = ['User Profile', 'Log Out'];
 const adminAvatarItems = ['Admin Dashboard', 'Purge Redux Store', 'Log Out'];
 
@@ -93,8 +93,8 @@ const NavMenu = (props) => {
                 return("section-two");
             case "History":
                 return("section-three");
-            case "Goals":
-                return("section-four");
+            // case "Goals":
+            //     return("section-four");
             case "Contact":
                 return("footer");
             default:

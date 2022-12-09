@@ -22,29 +22,6 @@ html{
   margin: 0;
   padding: 0;
 }
-/* .dashboard-button {
-  border: 2px solid black;
-  margin-right: 2.5%;
-} */
-
-/* .landing-page-title {
-  border-bottom: 4px solid white;
-  height: 18%;
-  margin: auto;
-  width: 50%;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  align-items: center;
-  margin-top: 15%;
-  margin-left: 25%;
-  text-align: center;
-  font-family: var(--font-family);
-  font-size: 400%;
-  white-space: nowrap;
-  color: white;
-} */
 
 /* Text Boxes on all of the sections on the landing page */
 .landing-page-text {
@@ -57,12 +34,16 @@ html{
   /* right: 0px; */
   background-color: whitesmoke;
 }
-
+.card-image{
+  padding: 0 !important;
+  width: 90%;
+  line-height: 0;
+}
 .footer-container {
   position: absolute;
   border: 2px solid black;
   width: 100vw;
-  box-shadow: var(--box-shadow);
+  box-shadow:inset 0 0 0 2000px rgb(2, 0, 21)
 }
 
 .main-page-desc{

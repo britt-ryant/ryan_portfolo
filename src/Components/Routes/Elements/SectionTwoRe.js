@@ -253,8 +253,9 @@ const SectionTwoRe = (props) => {
                 <motion.div
                     transition={bounceTransition}
                     animate={{
-                        y: ["400%", "-10%"],
-                    }}>
+                        y: ["200%", "0%"],
+                    }}
+                >
                         <Typography sx={{color: '#d6d6d6'}}>Drag and drop logo for details</Typography>
                 </motion.div>
             </div>
@@ -268,9 +269,8 @@ const SectionTwoRe = (props) => {
             display: "flex",
             width: (size + gap) * 4 - gap,
             height: (size + gap) * 4 - gap,
-            top: "50%",
             left: "50%",   
-            transform: `translate(-50%, ${mobile ? '50%' : '15%'})`,
+            transform: `translate(-50%, ${mobile ? '50%' : '10%'})`,
             position: "relative",
             perspective: 1000
             }}

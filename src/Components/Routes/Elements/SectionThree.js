@@ -13,13 +13,19 @@ import Resume from '../../../Pdf/Ryan Britt Resume_2022.pdf';
 import tuna from '../../../images/gbft.jpeg';
 import jl from '../../../images/jl.jpeg';
 import sunset from '../../../images/sunset.jpeg';
+import code from '../../../images/codescreenshot.jpg';
+import cad from '../../../images/h2dwg.JPG';
+import h2 from '../../../images/h2GA.JPG'
 //import MUI components
 import {
         Dialog, 
         Button,
-        Box
+        Box,
+        Typography,
+    
     } from '@mui/material';
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -33,6 +39,27 @@ export default class SectionThree extends React.Component{
             renderResume: false,
             renderDescription: false,
             cards: [
+                {
+                title: "GalaxE. Solutions",
+                role: "Software Engineer | Webb Developer", 
+                description: [
+                    [`Built applications using React, Redux, Express, NodeJS, .NET, SQL, PostgreSQL`],
+                    [`Finished training on AWS Cloud Services such as S3, Lambda, EC2, AWS-Cloud Trial and Cloud Watch`],
+                    [`Worked on a client project that was built with React, Redux, AWS, Python, and PostgreSQL`],
+                ], 
+                date: `07/2022-Present`,
+                image: code
+                },
+                {
+                title: "Griffin Marine",
+                role: "CAD Designer | Electrical Engineer", 
+                description: [
+                    [`Created and maintained detailed CAD drawings for vessels in progress`],
+                    [`Performed vessel installations and improvements including mechanical, and electrical`],
+                ], 
+                date: `03/2022-07/2022`,
+                image: cad
+                },
                 {
                 title: "Jenny Lee SportFishing",
                 role: "Business Owner", 
@@ -49,9 +76,18 @@ export default class SectionThree extends React.Component{
                 date: `07/2018-11/2021`,
                 image: tuna
                 },
-                {image: tuna, color: '#d6d6d6', title: "Tuna"},
-                {image: jl, color: '#d6d6d6', title: "Jenny Lee"},
-                {image: sunset, color: '#d6d6d6', title: "Sunset"},
+                {
+                title: "Gibbs and Cox",
+                role: "Naval Architect | Marine Engineer", 
+                description: [
+                    [`Refined ship superstructure designs using 3D modeling software including Solidworks, AutoCad and Rhino 3D`],
+                    [`Developed ship general arrangements including floor plans, equipment specs, and egress/escape routing`],
+                    [`Assumed role as lead engineer for developing interior volume estimates utilizing GHS software `],
+                ], 
+                date: `08/2014-03/2016`,
+                image: h2
+                },
+
             ],
             exitX: "100%",
             index: 0
@@ -63,16 +99,10 @@ export default class SectionThree extends React.Component{
         this.setIndex = this.setIndex.bind(this);
     }
 
-    // componentDidUpdate(){
-    //     console.log(this.state.index);
-    //     console.log(this.state.cards.length);
-    // }
-
     handleOpenResume(){
-        this.setState({renderResume: !this.state.renderResume})
+        this.setState({renderResume: !this.state.renderResume});
     };
     handleOpenDescription(){
-       // console.log("Clicked from the parent for ---> ", this.state.cards[this.state.index].title);
         this.setState({renderDescription: !this.state.renderDescription});
     }
 
@@ -95,21 +125,64 @@ export default class SectionThree extends React.Component{
         }
     }
 
-
     render(){
         let totalLength = this.state.cards.length;
         let nextIndex = this.state.index + 1;
         return(
             <div className='inner-section-container three'>
-                {/* <div style={{position: "absolute", height: '75vh', width: '40vw', border: '2px solid black', marginTop: "10vh"}}> */}
+                <Box sx={{width: '100vw', position: 'absolute', marginTop: ['10vh', '10vh']}}>
+                    <Typography sx={{color: '#d6d6d6'}}>Swipe to See Experience</Typography>
+                    </Box>
+                <motion.div
+                        transition={{x: {
+                            duration: 1,
+                            yoyo: Infinity,
+                            ease: "easeOut"
+                        }}}
+                        animate={{
+                            x: ["-1%", "1%"]
+                        }}>
+                    <Box sx={{
+                            height: '100vh', 
+                            position: 'absolute', 
+                            marginLeft: ["0%",'13%','23%']
+                            }}>
+                                <ArrowBackIosNewIcon 
+                                                fontSize='large' 
+                                                sx={{
+                                                    color: '#d6d6d6', 
+                                                    marginTop:['30vh','45vh']
+                                                    }}/>
+                    </Box>
+                </motion.div>
+                <motion.div
+                        transition={{x: {
+                            duration: 1,
+                            yoyo: Infinity,
+                            ease: "easeOut"
+                        }}}
+                        animate={{
+                            x: ["1%", "-1%"]
+                        }}>
+                    <Box sx={{
+                            height: '100vh', 
+                            position: 'absolute', 
+                            marginLeft: ["90%",'85%','75%']
+                            }}>
+                                <ArrowForwardIosIcon 
+                                                fontSize='large' 
+                                                sx={{
+                                                    color: '#d6d6d6', 
+                                                    marginTop:['30vh','45vh']
+                                                    }}/>
+                    </Box>
+                </motion.div>
                     <motion.div style={{
-                        border: '2px solid red',
                         width: "100vw", 
                         height: "100vh", 
                         justifyContent: "center", 
                         display: 'flex', 
-                        position: "absolute", 
-                        // alignSelf: "center" 
+                        position: "absolute",
                         }}>
                         <AnimatePresence initial={false}>
                             <JobCard
@@ -144,14 +217,10 @@ export default class SectionThree extends React.Component{
                     <Box 
                         sx={{position: 'absolute',
                             width: '100%',
-                            marginTop: ['60vh','85vh'],
+                            marginTop: ['65vh','85vh'],
                             }}>
                         <Button onClick={this.handleOpenResume}>View PDF Resume</Button>
                     </Box>
-                    {/* {this.state.cards.map((card) => {
-                        return (<JobCard image={card.image} color={card.color} />)
-                    })} */}
-                {/* </div> */}
                 {this.state.renderDescription ? 
                     <DescriptionDialog
                         open={this.handleOpenDescription}

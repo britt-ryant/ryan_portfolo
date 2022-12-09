@@ -60,13 +60,14 @@ const FormDialog = (props) => {
                     case true:
                         dispatch(addInfoAsync(formData)).then((data) => {
                             dispatch(renderReducer());
-                            callSuccessToast(`Message sent successfully!`)
+                            //callSuccessToast(`Message sent successfully!`)
+                            sendEmail(event, formData);
                         });
                     break;
                     case false: 
                         dispatch(setMessageState(formData));
                         dispatch(renderReducer())
-                        
+                        sendEmail(event, formData);
                     break;
                     default: 
                         console.log("Something went wrong with the checkbox switch");
@@ -139,7 +140,7 @@ const FormDialog = (props) => {
     //******************** Handling emails sending **********************************/
 
     const sendEmail = (event, formData) => {
-        event.preventDefault();
+        //event.preventDefault();
         emailjs.send(serviceId, templateId, formData, publicKey).then((result) => {
             console.log(result.text);
             toast.success("Your message has been sent!", 

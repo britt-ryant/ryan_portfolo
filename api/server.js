@@ -203,11 +203,13 @@ app.get('/user/get/:email/:password', (req, res) => {
 //method to get a user by specific id
 app.get('/user/get/:id', (req, res) => {
     const {id} = req.params;
+    console.log(id);
     const dbQuery = "SELECT * FROM user_db WHERE id=?";
     db.query(dbQuery, id, (error, result) => {
         if(error){
             console.log(`Something went wrong getting user by id`);
         }
+        console.log(result);
         res.send(result);
     })
 })
