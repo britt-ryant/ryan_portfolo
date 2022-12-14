@@ -92,7 +92,6 @@ app.get('/user/count', (req, res) => {
 
 //get total number of users and timestamp
 app.get('/admin/timechart', (req, res) => {
-    //const dbQuery = "with data as(select DATE(timestamp) as date, COUNT(id) as total_daily from user_db group by date) select date, total_daily, sum(total_daily) over(order by date) as cumulative_total from data";
     const dbQuery = `with data as(
                                 SELECT 
                                     DATE(timestamp_created) AS date,
