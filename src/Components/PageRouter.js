@@ -34,12 +34,13 @@ class PageRouter extends React.Component{
 
   componentWillMount(){
     const pathname = window.location.pathname;
-    const id = pathname.substring(7);
-    console.log(id);
+    let id = pathname.substring(7);
     const {dispatch} = this.props;
-    dispatch(getUserByIdAsync(id)).then((data)=>{
-        console.log(data);
-    })
+    if(!this.props){
+        dispatch(getUserByIdAsync(id)).then((data)=>{
+            console.log(data);
+        })
+    }
   }
 
 

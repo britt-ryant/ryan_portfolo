@@ -106,7 +106,7 @@ const tempData = (noOfPoints) => {
     
     return (
         <div>
-            <Paper sx={{p:2, marginBottom: 4, boxShadow: 20}}>
+            <Paper sx={{p:2, boxShadow: 20}}>
             <Typography    
                         noWrap
                        component="h3" 

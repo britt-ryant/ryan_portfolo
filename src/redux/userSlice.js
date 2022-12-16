@@ -298,6 +298,7 @@ const userSlice = createSlice({
             console.log(action);
             new Promise((resolve, reject) => {
                 resolve(state.userInfo.id = action.payload.userInfo[0].id)
+                reject(console.log(`Trouble fetching user Id`))
             }).then((data) => {
                 console.log(data);
             })

@@ -44,6 +44,7 @@ import { alpha } from "@mui/material";
 import AccountInfo from './ProfileComponents/AccountInfo';
 import MessageComponent from './ProfileComponents/MessageComponent';
 import FormDialog from '../FormComponents/FormDialog';
+import TestDnd from './TestDnd';
 
 
 
@@ -56,8 +57,9 @@ import NewUserChart from './Admin/NewUserChart';
 import { chartReducer, totalUserCountReducer, tableReducer } from '../../redux/adminSlice';
 import AreYouSure from '../FormComponents/User/AreYouSure';
 import WeatherComponent from './WeatherComponent';
-import weatherSlice, { renderWeatherInfo } from '../../redux/weatherSlice';
+import { renderWeatherInfo } from '../../redux/weatherSlice';
 import TableManager from './Admin/TableManager';
+
 
 
 const darkTheme = createTheme({
@@ -142,6 +144,8 @@ const AppBar = styled(MuiAppBar, {
 
 const SideBar = (props) => {
     const dispatch = useDispatch();
+    // const dragItem = React.useRef();
+    // const dragOverItem = React.useRef();
     const user = useSelector(state => state.user);
     const admin = useSelector(state => state.admin);
     const form = useSelector(state => state.form);
@@ -152,6 +156,8 @@ const SideBar = (props) => {
     const [redirect, setRedirect] = React.useState(false);
     const [mode, setMode] = React.useState("Light Mode");
     const [edit, setEdit] = React.useState(false);
+    //const [adminComp, setAdminComp] = React.useState([{src: <AccountInfo />}, {src: <UserStats />}, {src: <WeatherComponent />}, {src: <NewUserChart />}, {src: <TableManager />}, {src: <MessageComponent />}])
+
 
     // React.useEffect(() => {
     //     // console.log(user);
@@ -251,65 +257,6 @@ const SideBar = (props) => {
         return setRedirect(true)
     }
 
-    const handleAdmin = () => {
-        // console.log(`Handling Admin`);
-        switch(true){
-            case user.admin:
-                //return console.log("admin render");
-                return(
-                    <React.Fragment>
-                        <Box sx={{
-                                marginTop: 5,
-                                display: 'grid',
-                                gap: 2,
-                                p: 2,
-                                gridTemplateColumns: 'repeat(3, 1fr)',
-                                width: '100%',
-                                }}>
-                            <AccountInfo renderEdit={edit} />
-                            {admin.renderTotalUserCount ? <UserStats /> : null}
-                            {weather.renderWeatherData ? <WeatherComponent /> : null}
-                        </Box>
-                        <Box sx={{
-                                    p: 2,
-                                    width: '100%',
-                                    gap: 5,
-                                    }}>
-                            {admin.renderChart ? <NewUserChart /> : null}
-                            {admin.renderTable ? <TableManager /> : null}
-                            {form.renderList ? <MessageComponent /> : null}
-                        </Box>
-
-                    </React.Fragment>
-                )
-            default: 
-                return(
-                    <React.Fragment>
-                        <Box sx={{
-                            display: 'grid',
-                            gap: 2,
-                            gridTemplateColumns:'repeat(1, 1fr)',
-                            border: 2,
-                            width: '80%',
-                        }}>
-                            <Box 
-                                sx={{
-                                    display: 'flex',
-                                    gap: 5
-                                }}>
-                            <AccountInfo renderEdit={edit} />
-                            {weather.renderWeatherData ? <WeatherComponent /> : null}
-                            </Box>
-                                {form.renderList ? <MessageComponent /> : null}
-                        </Box>
-                    </React.Fragment>
-                )   
-        }
-    }
-
-    // const successToast = () => {
-    //     console.log("success Toast Sidebar");
-    // }
     const handleFormClose = () => {
         dispatch(renderReducer());
     }
@@ -416,11 +363,15 @@ const SideBar = (props) => {
                             
                         }}>
                         <DrawerHeader theme={darkTheme}/>
-                        {/* <Container sx={{border: 2, mt: 4, mb: 4, marginLeft: 1}}> */}
-                            <Grid container spacing={3} >
-                                    {handleAdmin()}
-                            </Grid>
-                        {/* </Container> */}
+                        <TestDnd 
+                            // renderWeather={weather.renderWeatherData}
+                            // renderChart={admin.renderChart}
+                            // renderTable={admin.renderTable}
+                            // renderUserCount={admin.renderTotalUserCount}
+                            // renderMessages={form.renderList}   
+                            admin={user.admin}
+                                    
+                                    />
                         {redirect ? <Navigate to='/' replace={true} /> : null}
                         {form.renderForm ? <FormDialog
                                                                         handleFormClose={handleFormClose} 

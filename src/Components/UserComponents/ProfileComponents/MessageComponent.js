@@ -224,8 +224,8 @@ class MessageComponent extends React.Component{
             return(
                 <React.Fragment>
                     <TableRow key={45}>
-                        <TableCell sx={{width: 150}}>{time}</TableCell>
-                        <TableCell sx={{width: 200}}>{date}</TableCell>
+                        <TableCell >{time}</TableCell>
+                        <TableCell>{date}</TableCell>
                             {this.props.user.admin ? <TableCell>{message[0].first}</TableCell> : null}
                             {this.props.user.admin ? <TableCell>{message[0].last}</TableCell> : null}
                             {this.props.user.admin ? <TableCell>{message[0].email}</TableCell> : null}
@@ -241,8 +241,8 @@ class MessageComponent extends React.Component{
                     return(
                         <React.Fragment>
                             <TableRow key={item.id} >
-                                <TableCell sx={{width: 150}}>{time}</TableCell>
-                                <TableCell sx={{width: 200}}>{date}</TableCell>
+                                <TableCell>{time}</TableCell>
+                                <TableCell>{date}</TableCell>
                                 {this.props.user.admin ? <TableCell>{item.first}</TableCell> : null}
                                 {this.props.user.admin ? <TableCell>{item.last}</TableCell> : null}
                                 {this.props.user.admin ? <TableCell>{item.email}</TableCell> : null}
@@ -258,12 +258,11 @@ class MessageComponent extends React.Component{
             <Paper 
                 sx={{
                         p: 2,
-                        border: 2,
                         display: 'flex',
                         flexDirection: 'column',
-                        width: '100%',
-                        boxShadow: 20
-                }}>
+                        boxShadow: 20,
+                }}
+                >
                 <Typography 
                        noWrap
                        component="h3" 
@@ -325,7 +324,8 @@ class MessageComponent extends React.Component{
                             : null}
                         {!this.state.loading && this.state.error ? 
                             <TableRow key={47}>
-                                <TableCell  colSpan={this.state.admin ? 6 : 3} >
+                                <TableCell 
+                                        colSpan={this.state.admin ? 6 : 3} >
                                 {this.state.error}
                                 </TableCell>
                             </TableRow> 
