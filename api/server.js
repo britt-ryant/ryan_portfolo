@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 const mysql = require('mysql2');
 //const { response } = require('express');
 const bcrypt = require('bcrypt');
+const weatherRoute = require('./Routes/geoRoutes');
+const userRoute = require('./Routes/userRoutes');
 
 dotenv.config({ path: './config.env'});
 const app = express();
@@ -22,6 +24,9 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended : true}));
+
+app.use('/weather', weatherRoute);
+app.use('/users', userRoute);
 
 //**************DEV SERVER TEST ROUTE ************************/
 app.get('/apple/pie', (req, res) => {
@@ -79,16 +84,16 @@ app.get(`/search/:select/:searchString`, (req, res) => {
 })
 
 //get total number of users
-app.get('/user/count', (req, res) => {
-    const dbQuery = "SELECT COUNT(DISTINCT id) AS 'user_total' FROM user_db";
-    db.query(dbQuery, (error, result) => {
-        if(error){
-            console.log(`Error selecting user count`, error);
-        }
+// app.get('/user/count', (req, res) => {
+//     const dbQuery = "SELECT COUNT(DISTINCT id) AS 'user_total' FROM user_db";
+//     db.query(dbQuery, (error, result) => {
+//         if(error){
+//             console.log(`Error selecting user count`, error);
+//         }
 
-        res.send(result);
-    })
-});
+//         res.send(result);
+//     })
+// });
 
 //get total number of users and timestamp
 app.get('/admin/timechart', (req, res) => {
@@ -168,50 +173,68 @@ app.get('/api/get/:email', (req, res) => {
 })
 
 //add get method for login and Create Account
-app.get('/user/get/:email/:password', (req, res) => {
-    const { email, password } = req.params;
-    const getEmail = "SELECT * FROM user_db WHERE email=?";
-     db.query( getEmail, email, (error, result) => {
-        if(error){
-            console.log(`Something went wrong getting email: ${email} from db`, error);
-        }
-        console.log(result, "Found email in the db");
-        if(result.length !== 0){
-            bcrypt.compare(password, result[0].password).then((data) => {
-                if(data){
-                    res.send({
-                        error: false,
-                        result: result
-                    });
-                } else {
-                    res.send({
-                        error: `Username ${email} and Password don't match!`,
-                        result: result
-                    });
-                }
-            })
-        } else {
-            res.send({
-                error: `Username ${email} does not exist in our system, please create an account!`,
-                result: result,
-                });
-        }
-    })
-});
+// app.get('/user/get/:email/:password', (req, res) => {
+//     const { email, password } = req.params;
+//     const getEmail = "SELECT * FROM user_db WHERE email=?";
+//      db.query( getEmail, email, (error, result) => {
+//         if(error){
+//             console.log(`Something went wrong getting email: ${email} from db`, error);
+//         }
+//         console.log(result, "Found email in the db");
+//         if(result.length !== 0){
+//             bcrypt.compare(password, result[0].password).then((data) => {
+//                 if(data){
+//                     res.send({
+//                         error: false,
+//                         result: result
+//                     });
+//                 } else {
+//                     res.send({
+//                         error: `Username ${email} and Password don't match!`,
+//                         result: result
+//                     });
+//                 }
+//             })
+//         } else {
+//             res.send({
+//                 error: `Username ${email} does not exist in our system, please create an account!`,
+//                 result: result,
+//                 });
+//         }
+//     })
+// });
 
-//method to get a user by specific id
-app.get('/user/get/:id', (req, res) => {
-    const {id} = req.params;
-    console.log(id);
-    const dbQuery = "SELECT * FROM user_db WHERE id=?";
-    db.query(dbQuery, id, (error, result) => {
+//method to get user via email for Oauth/SSO
+app.get('/user/:email', (req, res) => {
+    console.log(req.params);
+    const dbQuery=`SELECT * FROM user_db WHERE email=?`
+    db.query(dbQuery, req.params.email, (error, result) => {
         if(error){
-            console.log(`Something went wrong getting user by id`);
+            console.log(`Error fetching user`);
+            res.send({Error: `User name does not exist in our system!`})
+        } else {
+            if(result.length !== 0){
+                res.send(result);
+            } else {
+                res.send({error: `Username ${req.params.email} does not exist in our system!`})
+            }
         }
-        console.log(result);
-        res.send(result);
     })
 })
+
+//method to get a user by specific id
+// app.get('/user/get/:id', (req, res) => {
+//     const {id} = req.params;
+//     console.log(id);
+//     const dbQuery = "SELECT * FROM user_db WHERE id=?";
+//     db.query(dbQuery, id, (error, result) => {
+//         if(error){
+//             console.log(`Something went wrong getting user by id`);
+//         }
+//         console.log(result);
+//         res.send(result);
+//     })
+// })
 
 //add Post method for Create Account
 app.post('/user/add', (req, res) => {
@@ -233,66 +256,65 @@ app.post('/user/add', (req, res) => {
 });
 
 //add PUT method to update forgotten password
-app.put('/user/put/:id', (req, res) => {
-    const {id} = req.params;
-    const {password} = req.body;
-    console.log("trying to enter Password: ", password);
-    bcrypt.hash(password, saltRounds).then((hashedPassword) => {
-        console.log(`changed ${password} to --> ${hashedPassword}`);
-        const dbQuery = "UPDATE user_db SET PASSWORD=? WHERE ID=?";
-        db.query(dbQuery, [hashedPassword, id], (error, result) => {
-            if(error){
-                console.log(`Got an error updating the password for user id: ${id}`);
-            }
-            //console.log(`updated password successfully ${password} and hashed password that was added: ${hashedPassword}`);
-            console.log(`Updated id: ${id} using password ${password}`);
-            let updatedUser = {id: id, password: password};
-            res.send(updatedUser);
-        })
-    })
-});
+// app.put('/user/put/:id', (req, res) => {
+//     const {id} = req.params;
+//     const {password} = req.body;
+//     console.log("trying to enter Password: ", password);
+//     bcrypt.hash(password, saltRounds).then((hashedPassword) => {
+//         console.log(`changed ${password} to --> ${hashedPassword}`);
+//         const dbQuery = "UPDATE user_db SET PASSWORD=? WHERE ID=?";
+//         db.query(dbQuery, [hashedPassword, id], (error, result) => {
+//             if(error){
+//                 console.log(`Got an error updating the password for user id: ${id}`);
+//             }
+//             //console.log(`updated password successfully ${password} and hashed password that was added: ${hashedPassword}`);
+//             console.log(`Updated id: ${id} using password ${password}`);
+//             let updatedUser = {id: id, password: password};
+//             res.send(updatedUser);
+//         })
+//     })
+// });
 
 //add PUT method to update user inf0
-app.put('/user/:id', (req, res) => {
-    const {id} = req.params;
-    const oEmail = req.body.user.email;
-    // const {first, last, email, password} = req.body.user
-    const {first, last, email, password} = req.body.formData;
-    bcrypt.hash(password, saltRounds).then((hashedPassword) => {
-        const dbQuery = `UPDATE user_db as u, info_db as i 
-                            SET u.first=?, i.first=?, u.last=?, i.last=?, u.email=?, i.email=?, u.password=? 
-                            WHERE u.email=? 
-                            AND u.email=i.email`
-        db.query(dbQuery, [first, first, last, last, email, email, hashedPassword, oEmail], (error, result) => {
-            if(error){
-                console.log(error);
-            }
-            const updatedInfo = {
-                                    id: id,
-                                    first: first,
-                                    last: last,
-                                    email: email,
-                                    password: password
-            }
-            res.send(updatedInfo);
-        })
-    })
+// app.put('/user/:id', (req, res) => {
+//     const {id} = req.params;
+//     const oEmail = req.body.user.email;
+//     const {first, last, email, password} = req.body.formData;
+//     bcrypt.hash(password, saltRounds).then((hashedPassword) => {
+//         const dbQuery = `UPDATE user_db as u, info_db as i 
+//                             SET u.first=?, i.first=?, u.last=?, i.last=?, u.email=?, i.email=?, u.password=? 
+//                             WHERE u.email=? 
+//                             AND u.email=i.email`
+//         db.query(dbQuery, [first, first, last, last, email, email, hashedPassword, oEmail], (error, result) => {
+//             if(error){
+//                 console.log(error);
+//             }
+//             const updatedInfo = {
+//                                     id: id,
+//                                     first: first,
+//                                     last: last,
+//                                     email: email,
+//                                     password: password
+//             }
+//             res.send(updatedInfo);
+//         })
+//     })
 
-});
+// });
 
 //method to add account creation instance to account_status
-app.put(`/user/account/add`, (req, res) => {
-    console.log(req.body);
-    const {user, id} = req.body;
-    let dbQuery = `INSERT INTO account_status VALUES(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)`;
-    db.query(dbQuery, [id, user.active, user.id, user.first, user.last, user.email, user.deleteStamp], (error, result) => {
-        if(error){
-            console.log(`there was an error entering into the db`, error);
-        } else {
-            res.send(result);
-        }
-    })
-})
+// app.put(`/user/account/add`, (req, res) => {
+//     console.log(req.body);
+//     const {user, id} = req.body;
+//     let dbQuery = `INSERT INTO account_status VALUES(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)`;
+//     db.query(dbQuery, [id, user.active, user.id, user.first, user.last, user.email, user.deleteStamp], (error, result) => {
+//         if(error){
+//             console.log(`there was an error entering into the db`, error);
+//         } else {
+//             res.send(result);
+//         }
+//     })
+// })
 //method to add deleted user to the deletion table ----- may me not necessary
 app.put(`/delete/add`, (req, res) => {
     let {id, user} = req.body;
@@ -325,17 +347,17 @@ app.delete(`/delete/:id`, (req, res) => {
 });
 
 //method to update the account_status table upon deletion of account
-app.put(`/user/account/delete`, (req, res) => {
-    const {id, active} = req.body;
-    const dbQuery = `UPDATE account_status SET account_status=?, timestamp_deleted=CURRENT_TIMESTAMP WHERE account_id=?`
-    db.query(dbQuery, [active, id], (error, result) => {
-        if(error){
-            console.log(`there was an error updating account status`, error);
-        } else {
-            res.send(result);
-        }
-    })
-})
+// app.put(`/user/account/delete`, (req, res) => {
+//     const {id, active} = req.body;
+//     const dbQuery = `UPDATE account_status SET account_status=?, timestamp_deleted=CURRENT_TIMESTAMP WHERE account_id=?`
+//     db.query(dbQuery, [active, id], (error, result) => {
+//         if(error){
+//             console.log(`there was an error updating account status`, error);
+//         } else {
+//             res.send(result);
+//         }
+//     })
+// })
 
 //test method
 app.get('/api/hello', (req, res) => {

@@ -10,6 +10,7 @@ import WeatherComponent from './WeatherComponent';
 import NewUserChart from './Admin/NewUserChart';
 import TableManager from './Admin/TableManager';
 import MessageComponent from './ProfileComponents/MessageComponent';
+import MapComponent from './ProfileComponents/MapComponent';
 
 import {
     Box, Grid,
@@ -21,12 +22,13 @@ const TestDnd = (props) => {
     const admin = useSelector(state => state.admin);
     const weather = useSelector(state => state.weather);
     const form = useSelector(state => state.form);
+    const info = useSelector(state => state.info);
     const [compList, setCompList] = React.useState(
                                                     [
                                                         {
                                                             key: 1,
                                                             src: <AccountInfo />,
-                                                            size: "xsm",
+                                                            size: "md",
                                                             render: true
                                                         },
                                                         {
@@ -35,6 +37,12 @@ const TestDnd = (props) => {
                                                             size: "sm",
                                                             render: weather.renderWeatherData
                                                         }, 
+                                                        {
+                                                            key: 7,
+                                                            src: <MapComponent />,
+                                                            size: 'md',
+                                                            render: info.renderMap
+                                                        },
                                                         {
                                                             key: 3,
                                                             src: <MessageComponent />,
@@ -46,7 +54,7 @@ const TestDnd = (props) => {
     const dragOverItem = React.useRef();
 
     useEffect(() => {
-        console.log(props);
+        // console.log(props);
         if(props.admin){
             setCompList([
                 ...compList,
@@ -96,6 +104,8 @@ const TestDnd = (props) => {
                 return 3
             case "sm":
                 return 4;
+            case "md":
+                return 5;
             case "lg":
                 return 8;
             default:
@@ -141,7 +151,6 @@ const TestDnd = (props) => {
                             )
                         }
                     break;
-                        
                     case 4:
                         if(admin.renderTotalUserCount){
                             return(
@@ -187,6 +196,21 @@ const TestDnd = (props) => {
                             )
                         }
                     break;
+                    case 7:
+                        if(info.renderMap){
+                            return(
+                                <Grid item xs={5} md={paperSize(item.size)}
+                                onDragStart={(e) => dragStart(e, index)}
+                                onDragEnter={(e) => dragEnter(e, index)}
+                                onDragEnd={drop}
+                                key={index}
+                                draggable
+                                >
+                                {item.src}
+                                </Grid>
+                            )
+                        }
+                    break;
                     default:
                         return(
                             <Grid item xs={5} md={paperSize(item.size)}
@@ -199,7 +223,7 @@ const TestDnd = (props) => {
                             {item.src}
                             </Grid>
                         )
-                }
+                    }
                 }
             )}
             </Grid>

@@ -8,8 +8,6 @@ import {Toaster} from 'react-hot-toast';
 
 //import MUI components
 import { 
-    Container,
-    Grid,
     Avatar,
     Box, 
     Toolbar, 
@@ -28,6 +26,7 @@ import {
     import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
     import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {styled, useTheme, ThemeProvider, createTheme} from '@mui/material/styles';
+import MapIcon from '@mui/icons-material/Map';
 import MenuIcon from '@mui/icons-material/Menu';
 import CottageIcon from '@mui/icons-material/Cottage';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -41,8 +40,6 @@ import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import CycloneTwoToneIcon from '@mui/icons-material/CycloneTwoTone';
 import BackupTableRoundedIcon from '@mui/icons-material/BackupTableRounded';
 import { alpha } from "@mui/material";
-import AccountInfo from './ProfileComponents/AccountInfo';
-import MessageComponent from './ProfileComponents/MessageComponent';
 import FormDialog from '../FormComponents/FormDialog';
 import TestDnd from './TestDnd';
 
@@ -52,13 +49,10 @@ import TestDnd from './TestDnd';
 import { Navigate } from 'react-router-dom';
 import { deleteAccountReducer, editAccountFormReducer } from '../../redux/userSlice';
 import {renderListReducer, renderReducer} from '../../redux/formSlice';
-import UserStats from './Admin/UserStats';
-import NewUserChart from './Admin/NewUserChart';
 import { chartReducer, totalUserCountReducer, tableReducer } from '../../redux/adminSlice';
 import AreYouSure from '../FormComponents/User/AreYouSure';
-import WeatherComponent from './WeatherComponent';
 import { renderWeatherInfo } from '../../redux/weatherSlice';
-import TableManager from './Admin/TableManager';
+import { renderMapReducer } from '../../redux/infoSlice';
 
 
 
@@ -144,12 +138,10 @@ const AppBar = styled(MuiAppBar, {
 
 const SideBar = (props) => {
     const dispatch = useDispatch();
-    // const dragItem = React.useRef();
-    // const dragOverItem = React.useRef();
     const user = useSelector(state => state.user);
-    const admin = useSelector(state => state.admin);
+    // const admin = useSelector(state => state.admin);
     const form = useSelector(state => state.form);
-    const weather = useSelector(state => state.weather);
+    // const weather = useSelector(state => state.weather);
     const initials = `${user.userInfo.first.charAt(0).toUpperCase()}${user.userInfo.last.charAt(0).toUpperCase()}`;
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -208,6 +200,9 @@ const SideBar = (props) => {
             case "Weather":
                 dispatch(renderWeatherInfo());
             break;
+            case "Map":
+                dispatch(renderMapReducer());
+            break;
             case "SQL Tables":
                 dispatch(tableReducer());
             break;
@@ -238,6 +233,8 @@ const SideBar = (props) => {
                 return(<DynamicFeedIcon />);
             case "Weather":
                 return (<CycloneTwoToneIcon />);
+            case "Map":
+                return (<MapIcon />);
             case "SQL Tables":
                 return(<BackupTableRoundedIcon />)
             default:
@@ -247,9 +244,9 @@ const SideBar = (props) => {
 
     const sideBarRenderList = () => {
         if(user.admin){
-            return ["Home", "Edit Account", "User Totals", "Weather", "Insights", "SQL Tables", "Show Messages"]
+            return ["Home", "Edit Account", "User Totals", "Weather", "Map", "Insights", "SQL Tables", "Show Messages"]
         } else {
-            return ["Home", "Edit Account", "Send Message", "Weather", "Show Messages", "Delete Account"]
+            return ["Home", "Edit Account", "Send Message", "Weather", "Map", "Show Messages", "Delete Account"]
         }
     }
     
@@ -363,14 +360,8 @@ const SideBar = (props) => {
                             
                         }}>
                         <DrawerHeader theme={darkTheme}/>
-                        <TestDnd 
-                            // renderWeather={weather.renderWeatherData}
-                            // renderChart={admin.renderChart}
-                            // renderTable={admin.renderTable}
-                            // renderUserCount={admin.renderTotalUserCount}
-                            // renderMessages={form.renderList}   
+                        <TestDnd   
                             admin={user.admin}
-                                    
                                     />
                         {redirect ? <Navigate to='/' replace={true} /> : null}
                         {form.renderForm ? <FormDialog

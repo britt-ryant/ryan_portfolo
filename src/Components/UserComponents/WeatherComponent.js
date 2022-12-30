@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 //import slice files
 import { getWeatherDataAsync, setPosition } from '../../redux/weatherSlice';
+import { getLocationAsync, setLocationReducer } from '../../redux/infoSlice';
 
 //import mui components
 import {
@@ -39,6 +40,7 @@ const WeatherComponent = () => {
     const dispatch = useDispatch();
     const[loading, setLoading] = React.useState(true);
     const weather = useSelector(state => state.weather);
+    const user = useSelector(state => state.user);
 
 
 React.useEffect(() => {
@@ -47,23 +49,38 @@ React.useEffect(() => {
 
 
     const handleGetLocation = (event) => {
+        
         if(event){
             event.preventDefault();
         }
-        setLoading(true)
-        if(navigator.geolocation){
-            navigator.geolocation.getCurrentPosition((position) => {
-                let latitude = position.coords.latitude;
-                let longitude = position.coords.longitude;
-                getWeatherData(latitude, longitude)
-            })
-        } else {
-            toast.error(`Please enable Location on your browser, otherwise NY, NY will be your default weather source`);
-            getWeatherData(40.730610, -73.935242);
-        }
+        setLoading(true);
+        navigator.permissions.query({ name: 'geolocation'}).then((data) => {
+            // console.log(data)
+            if(data.state === 'denied'){
+                toast.error(`Please enable Location on your browser, otherwise NY, NY will be your default weather source`);
+                getWeatherData(40.730610, -73.935242);
+            } else {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    getWeatherData(latitude, longitude);
+                    // console.log(latitude, longitude);
+                    dispatch(getLocationAsync({
+                                                id: user.userInfo.id,
+                                                latitude: latitude, 
+                                                longitude: longitude
+                                            }))
+                    dispatch(setLocationReducer({lat: latitude, lng: longitude}))
+                })
+            }
+        })
+        // if(navigator.geolocation !== {}){
+        // } else {
+        // }
     }
 
     const getWeatherData = (latitude, longitude) => {
+        console.log(`in get weather data`);
         dispatch(setPosition({latitude: latitude, longitude: longitude}));
         dispatch(getWeatherDataAsync({latitude: latitude, longitude: longitude})).then(() => {
             setLoading(false)
@@ -186,7 +203,7 @@ React.useEffect(() => {
                                 gutterBottom
                     >Average Wind Speed: {!loading && weather.data.currently ? `${weather.data.currently.windSpeed} mph`: loadingData()}</Typography>
                     <Divider/>
-                    <Typography
+                    {/* <Typography
                                 noWrap
                                 component="h3" 
                                 color= "primary"
@@ -211,7 +228,7 @@ React.useEffect(() => {
                                 variant="h6" 
                                 gutterBottom
                     >Percipitation Intensity: {!loading && weather.data.currently ? `${weather.data.currently.precipIntensity} in`: loadingData()}</Typography>
-                    <Divider/>
+                    <Divider/> */}
                 </Stack>
                 {/* <Button 
                     sx={{p: 2}}

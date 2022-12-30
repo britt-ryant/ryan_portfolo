@@ -261,6 +261,7 @@ class MessageComponent extends React.Component{
                         display: 'flex',
                         flexDirection: 'column',
                         boxShadow: 20,
+                        overflowX: 'auto'
                 }}
                 >
                 <Typography 

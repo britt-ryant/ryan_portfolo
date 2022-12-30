@@ -2,13 +2,17 @@
 //Libraries imports
 import React, { useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { PURGE } from 'redux-persist';
 import { Link, Element, Events, scroller, animateScroll as scroll } from 'react-scroll';
 import NavBar from '../../ComponentsUnused/NavBar';
 import NavMenu from '../NavMenu';
 import { renderReducer, resetFormDataReducer } from '../../redux/formSlice';
 import { logInFormReducer, createAccountFormReducer, logOut } from '../../redux/userSlice';
+import { loggedInReducer } from '../../redux/infoSlice';
 import { connect } from 'react-redux';
 import toast, {Toaster} from 'react-hot-toast';
+
+import axios from 'axios';
 
 //import components for the main page
 import Footer from '../Footer';
@@ -21,6 +25,7 @@ import SectionThree from './Elements/SectionThree';
 import SectionFour from './Elements/SectionFour';
 import SectionTwoRe from './Elements/SectionTwoRe';
 import { adminLogOutReducer } from '../../redux/adminSlice';
+
 
 const stateToProps = (state) => {
     return state;
@@ -44,10 +49,33 @@ const LandingPage = (props, ref) => {
             dispatch(adminLogOutReducer())
         }
         dispatch(logOut());
+        dispatch(loggedInReducer({data: false}));
         dispatch(resetFormDataReducer());
+        window.open(
+            `${process.env.REACT_APP_API_URL}/auth/logout`,
+            "_self"
+            )
+        dispatch({
+           type: PURGE,
+           key: 'root',
+           result: () => null
+       });
+
         //need to dispatch an admin reducer to remove admin info OR purge redux state all together!
 
     };
+
+    // const sessionLogOut = async() => {
+    //     console.log(`in the try catch`);
+    //     try{
+    //         const url = `${process.env.REACT_APP_API_URL}/auth/logout`;
+    //         const {data} = await axios.post(url, {withCredentials: true})
+    //         console.log(`here`, data);
+    //     } catch(error){
+    //         console.log(`error in the try catch`)
+    //     }
+    // }
+
     const handleLogInRenderClick = (event) => {
         if(props.user.renderForm.createAccount){
             dispatch(logInFormReducer());
@@ -77,10 +105,22 @@ const LandingPage = (props, ref) => {
                 break;
             case logInForm:
                 console.log("Closing form: log in form");
+                console.log(props.info.oAuthLoggedIn);
+                if(props.info.oAuthLoggedIn){
+                    // dispatch(loggedInReducer({data: false}))
+                    window.open(
+                        `${process.env.REACT_APP_API_URL}/auth/logout`,
+                        "_self"
+                        )
+                    }
                 dispatch(logInFormReducer());
                 break;
             case signUpForm:
                 console.log("Closing create account form");
+                window.open(
+                    `${process.env.REACT_APP_API_URL}/auth/logout`,
+                    "_self"
+                    )
                 dispatch(createAccountFormReducer())
                 break;
             default:
