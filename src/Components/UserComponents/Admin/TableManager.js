@@ -62,7 +62,8 @@ const TableManager = () => {
                             sx={{
                                 p:2,
                                 border:2,
-                                width: '100%',
+                                minWidth: "50vw",
+                                // width: '100%',
                                 marginBottom: 10,
                                 boxShadow: 20,
                                 // height: 700

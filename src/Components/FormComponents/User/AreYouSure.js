@@ -37,6 +37,7 @@ class AreYouSure extends React.Component{
     handleClose(){
         const {dispatch} = this.props;
         dispatch(deleteAccountReducer());
+        
     }
 
     checkSubmission(event){
@@ -52,7 +53,9 @@ class AreYouSure extends React.Component{
                     dispatch(adminLogOutReducer())
                 } 
                 new Promise((resolve, reject) => {
-                    resolve(this.props.handleRedirect())
+                    resolve(
+                        this.props.handleRedirect()
+                        )
                 }).then(() => {
                     toast.success(`Your account was successfully deleted!`);
                     dispatch(addDeletedUserAsync(this.props.user.userInfo)).then(() =>{

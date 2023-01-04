@@ -1,18 +1,34 @@
 import { createSlice, createAsyncThunk, current, nanoid } from '@reduxjs/toolkit';
-import { get } from 'react-scroll/modules/mixins/scroller';
 
 
 const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD
 const adminEmail = process.env.REACT_APP_ADMIN_EMAIL
 
+export const testUserAsync = createAsyncThunk(
+    '/users/test',
+    async() => {
+        const response = await fetch(`http://localhost:5000/users/test`)
+        if(response.ok){
+            console.log(`Hit test properly in the slice`);
+            let userInfo = await response.json();
+            return userInfo
+        } else {
+            console.log(`did this wrong`);
+        }
+
+    }
+)
+
 export const getUserDataAsync = createAsyncThunk(
     '/user/getUserDataAsync',
     async(payload) => {
-        //console.log("getting user information...");
+        console.log(`here`);
+        console.log(process.env.REACT_APP_SERVER_URL);
         let email = payload.email.toLowerCase();
-        const response = await fetch(`http://localhost:5000/user/get/${email}/${payload.password}`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/get/${email}/${payload.password}`)
         if(response.ok){
             let userInfo = await response.json();
+            console.log(userInfo);
             return { userInfo }
         } else {
             console.log("Something went wrong with dbQuery, check server console");
@@ -20,11 +36,25 @@ export const getUserDataAsync = createAsyncThunk(
     }
 );
 
+export const getOauthUser = createAsyncThunk(
+'user/getOauthUser',
+async(payload) => {
+    let email = payload;
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/${email}`);
+    if(response.ok){
+        let userInfo = await response.json();
+        return { userInfo } 
+    } else {
+        console.log(`there was an error fetching Oauth user!`);
+    }
+}
+)
+
 export const getUserByIdAsync = createAsyncThunk(
-    '/user/getUserByIdAsync', 
+    '/users/getUserByIdAsync', 
     async(payload) => {
         let id = payload;
-        const response = await fetch(`http://localhost:5000/user/get/${id}`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/get/${id}`)
         if(response.ok){
             let userInfo = await response.json();
             return {userInfo}
@@ -35,7 +65,7 @@ export const getUserByIdAsync = createAsyncThunk(
 export const getTotalUserCountAsync = createAsyncThunk(
     '/user/getTotalUserCountAsync',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/user/count`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/count`)
         if(response.ok){
             let userCount = await response.json();
             return {userCount}
@@ -46,9 +76,9 @@ export const getTotalUserCountAsync = createAsyncThunk(
 );
 
 export const updateUserPasswordAsync = createAsyncThunk(
-    '/user/updateUserPasseordAsync',
+    '/user/updateUserPasswordAsync',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/user/put/${payload.id}`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/put/${payload.id}`,
             {
                 method: "PUT",
                 headers: {
@@ -71,7 +101,7 @@ export const createUserAsync = createAsyncThunk(
         console.log("posting user to db...");
         const id = nanoid();
         const email = payload.email.toLowerCase();
-        const response = await fetch(`http://localhost:5000/user/add`, 
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/add`, 
         {
             method: `POST`,
             headers: {
@@ -99,7 +129,7 @@ export const addUserToAccountTrackAsync = createAsyncThunk(
         let user = payload;
         user.active = true;
         user.deleteStamp = "NA";
-        const response = await fetch(`http://localhost:5000/user/account/add`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/account/add`,
         {
             method: 'PUT',
             headers: {
@@ -122,7 +152,7 @@ export const addUserToAccountTrackAsync = createAsyncThunk(
 export const updateUserAsync = createAsyncThunk(
     '/user/updateUserAsync',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/user/${payload.user.id}`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/${payload.user.id}`,
         {
             method: 'PUT',
             headers: {
@@ -145,7 +175,7 @@ export const addDeletedUserAsync = createAsyncThunk(
     async(payload) => {
         let user = payload;
         const id = nanoid();
-        const response = await fetch(`http://localhost:5000/delete/add`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/delete/add`,
         {
             method: 'PUT',
             headers: {
@@ -166,8 +196,8 @@ export const addDeletedUserAsync = createAsyncThunk(
 export const updateAccountStatusAsync = createAsyncThunk(
     '/user/account/updateAccountStatusAsync',
     async(payload) => {
-         console.log(payload);
-         const response = await fetch(`http://localhost:5000/user/account/delete`,
+        //  console.log(payload);
+         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/account/delete`,
          {
             method: 'PUT',
             headers: {
@@ -191,7 +221,7 @@ export const deleteUserAsync = createAsyncThunk(
     '/user/deleteUserAsync',
     async(payload) => {
         console.log(`in delete account reducer`, payload);
-        const response = await fetch(`http://localhost:5000/delete/${payload.user.userInfo.id}`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/delete/${payload.user.userInfo.id}`,
         {   
             method: 'DELETE'
         })
@@ -269,6 +299,7 @@ const userSlice = createSlice({
             console.log("getting password from db...");
         },
         [getUserDataAsync.fulfilled]: (state, action) => {
+            console.log(action.payload);
             let returnData = action.payload.userInfo[0];
             if(returnData){
                 let currentState = current(state);
@@ -298,6 +329,7 @@ const userSlice = createSlice({
             console.log(action);
             new Promise((resolve, reject) => {
                 resolve(state.userInfo.id = action.payload.userInfo[0].id)
+                reject(console.log(`Trouble fetching user Id`))
             }).then((data) => {
                 console.log(data);
             })
@@ -336,11 +368,25 @@ const userSlice = createSlice({
         [addDeletedUserAsync.fulfilled]:(state, action) => {
             return action.payload
         },
-        [deleteUserAsync.pending]: (action, state) => {
+        [deleteUserAsync.pending]: (state, aciton) => {
             console.log(`Deleting user...`);
         },
-        [deleteUserAsync.fulfilled]: (action, state) => {
+        [deleteUserAsync.fulfilled]: (state, action) => {
             return initialState
+        },
+        [getOauthUser.pending]: (state, action) => {
+            console.log(`fetching Oauth user`);
+        },
+        [getOauthUser.fulfilled]: (state, action) => {
+            new Promise((resolve, reject) => {
+                if(action.payload.userInfo[0]){
+                    resolve(state.userInfo = action.payload.userInfo[0])
+                    resolve(state.loggedIn = true)
+                } else {
+                    return action.payload
+                }
+            })
+            
         }
     }
 

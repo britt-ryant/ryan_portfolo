@@ -59,7 +59,7 @@ class UserStats extends React.Component{
                         boxShadow: 20,
                         p: 2,
                         marginTop: 5,
-                        maxHeight: '60%',
+                        // maxHeight: '60%',
                         textAlign: 'left'
                     }}>
                 <Typography
