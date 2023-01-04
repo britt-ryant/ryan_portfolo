@@ -37,7 +37,7 @@ export const getOauthUser = createAsyncThunk(
 'user/getOauthUser',
 async(payload) => {
     let email = payload;
-    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/user/${email}`);
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/${email}`);
     if(response.ok){
         let userInfo = await response.json();
         return { userInfo } 
@@ -172,7 +172,7 @@ export const addDeletedUserAsync = createAsyncThunk(
     async(payload) => {
         let user = payload;
         const id = nanoid();
-        const response = await fetch(`http://localhost:5000/delete/add`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/delete/add`,
         {
             method: 'PUT',
             headers: {

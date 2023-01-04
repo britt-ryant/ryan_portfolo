@@ -206,4 +206,37 @@ router.delete(`/delete/:id`, (req, res) => {
     })
 });
 
+//method to get user via email for Oauth/SSO
+router.get('/:email', (req, res) => {
+    console.log(req.params, "in the routes");
+    const dbQuery=`SELECT * FROM user_db WHERE email=?`
+    db.query(dbQuery, req.params.email, (error, result) => {
+        if(error){
+            console.log(`Error fetching user`);
+            res.send({Error: `User name does not exist in our system!`})
+        } else {
+            if(result.length !== 0){
+                res.send(result);
+            } else {
+                res.send({error: `Username ${req.params.email} does not exist in our system!`})
+            }
+        }
+    })
+})
+
+//method to add deleted user to the deletion table ----- may me not necessary
+router.put(`/delete/add`, (req, res) => {
+    let {id, user} = req.body;
+    // console.log(`deleted from user router`);
+    let dbQuery = `INSERT INTO deletion_table VALUES(?, CURRENT_TIMESTAMP, ?, ?, ?, ?)`;
+    db.query(dbQuery, [id, user.id, user.first, user.last, user.email], (error, result) => {
+        if(error) {
+            console.log(`there was an error entering into db`, error);
+        } else {
+            let deletedUser = {id: id, userId: user.id, first: user.first, last: user.last, email: user.email}
+            res.send(deletedUser);
+        }
+    })
+});
+
 module.exports = router;

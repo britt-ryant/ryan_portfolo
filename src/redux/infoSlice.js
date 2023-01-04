@@ -4,7 +4,7 @@ export const getLocationAsync = createAsyncThunk(
     '/weather/add',
     async(payload) => {
         // console.log(`in the get location`, payload);
-        const response = await fetch(`http://localhost:5000/weather/addLocation`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/weather/addLocation`,
         {
             method: 'POST',
             headers: {

@@ -7,7 +7,7 @@ import {createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const getUsersOverTimeAsync = createAsyncThunk(
     'admin/getUsersOverTimeAsync',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/admin/timechart`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/admin/timechart`)
         if(response.ok){
             let userOverTime = await response.json();
             return {userOverTime}
@@ -20,7 +20,7 @@ export const getUsersOverTimeAsync = createAsyncThunk(
 export const getAllUsersAsync = createAsyncThunk(
     'admin/getAllUsers?async',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/admin/all`);
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/admin/all`);
         if(response.ok){
             let allUsers = await response.json();
             return {allUsers}

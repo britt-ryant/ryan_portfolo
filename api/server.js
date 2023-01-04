@@ -8,6 +8,8 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const weatherRoute = require('./Routes/geoRoutes');
 const userRoute = require('./Routes/userRoutes');
+const apiRoutes = require('./Routes/apiRoutes');
+const adminRoutes = require('./Routes/adminRoutes');
 
 dotenv.config({ path: './config.env'});
 const app = express();
@@ -27,6 +29,8 @@ app.use(bodyparser.urlencoded({ extended : true}));
 
 app.use('/weather', weatherRoute);
 app.use('/users', userRoute);
+app.use('/api', apiRoutes);
+app.use('/admin', adminRoutes);
 
 //**************DEV SERVER TEST ROUTE ************************/
 app.get('/apple/pie', (req, res) => {
@@ -37,51 +41,51 @@ app.get('/apple/pie', (req, res) => {
 
 //get all messages in the info_db
 
-app.get('/api/allMessages', (req, res) => {
-    const dbQuery = "SELECT timestamp, first, last, email, message FROM info_db ORDER BY timestamp DESC;"
-    db.query(dbQuery, (error, result) => {
-        if(error){
-            console.log(`Error in the get request to info db`, error);
-        }
-        // console.log(`Got all messages for Admin`, result);
-        if(result.length === 0){
-            res.send({error: `No messages to show yet...`})
-        } else {
-            res.send(result)
-        }
-    })
-});
+// app.get('/api/allMessages', (req, res) => {
+//     const dbQuery = "SELECT timestamp, first, last, email, message FROM info_db ORDER BY timestamp DESC;"
+//     db.query(dbQuery, (error, result) => {
+//         if(error){
+//             console.log(`Error in the get request to info db`, error);
+//         }
+//         // console.log(`Got all messages for Admin`, result);
+//         if(result.length === 0){
+//             res.send({error: `No messages to show yet...`})
+//         } else {
+//             res.send(result)
+//         }
+//     })
+// });
 
 //get total number of messages
-app.get('/api/totalMessages', (req, res) => {
-    const dbQuery = "SELECT COUNT(info_db.message) AS message_count FROM info_db"
-    db.query(dbQuery, (error, result) => {
-        if(error){
-            console.log(`Got an error getting total messages`, error);
-        }
-        if(result.length === 0){
-            res.send({error: `No messages to show yet....`})
-        } else {
-            res.send(result)
-        }
-    })
-});
+// app.get('/api/totalMessages', (req, res) => {
+//     const dbQuery = "SELECT COUNT(info_db.message) AS message_count FROM info_db"
+//     db.query(dbQuery, (error, result) => {
+//         if(error){
+//             console.log(`Got an error getting total messages`, error);
+//         }
+//         if(result.length === 0){
+//             res.send({error: `No messages to show yet....`})
+//         } else {
+//             res.send(result)
+//         }
+//     })
+// });
 
 //get messages based on search parameters
-app.get(`/search/:select/:searchString`, (req, res) => {
-    console.log(req.params);
-    const {select, searchString} = req.params;
-    const dbQuery = `SELECT * FROM info_db AS results WHERE ${select} LIKE '%${searchString}%' ORDER BY timestamp DESC`;
-    db.query(dbQuery, [select, searchString], (error, result) => {
-        if(error){
-            console.log(`there was an error retrieving search data`, error);
-        }else if(result.length === 0){
-            res.send({error: `No messages to show...`})
-        } else {
-            res.send(result);
-        }
-    })
-})
+// app.get(`/search/:select/:searchString`, (req, res) => {
+//     console.log(req.params);
+//     const {select, searchString} = req.params;
+//     const dbQuery = `SELECT * FROM info_db AS results WHERE ${select} LIKE '%${searchString}%' ORDER BY timestamp DESC`;
+//     db.query(dbQuery, [select, searchString], (error, result) => {
+//         if(error){
+//             console.log(`there was an error retrieving search data`, error);
+//         }else if(result.length === 0){
+//             res.send({error: `No messages to show...`})
+//         } else {
+//             res.send(result);
+//         }
+//     })
+// })
 
 //get total number of users
 // app.get('/user/count', (req, res) => {
@@ -96,81 +100,81 @@ app.get(`/search/:select/:searchString`, (req, res) => {
 // });
 
 //get total number of users and timestamp
-app.get('/admin/timechart', (req, res) => {
-    const dbQuery = `with data as(
-                                SELECT 
-                                    DATE(timestamp_created) AS date,
-                                    COUNT(account_id) AS total
-                                    FROM account_status
-                                    GROUP BY date
-                                    UNION ALL 
-                                SELECT
-                                    DATE(timestamp_deleted) AS time_deleted,
-                                    -COUNT(CASE WHEN account_status = 0 THEN 1 ELSE NULL END) AS deletion_count
-                                    FROM account_status
-                                    GROUP BY time_deleted
-                                    ORDER BY date)
-                                        SELECT DISTINCT
-                                            date, SUM(total) OVER (ORDER BY date) AS cumulative_total FROM data`
-    db.query(dbQuery, (error, result) => {
-        if(error){
-            console.log(`screwed up query`, error);
-        }
-        console.log(result);
-        if(result.length !== 0){
-            res.send(result)
-        } else {
-            res.send({error: `No accounts created yet`})
-        }
-    })
-})
+// app.get('/admin/timechart', (req, res) => {
+//     const dbQuery = `with data as(
+//                                 SELECT 
+//                                     DATE(timestamp_created) AS date,
+//                                     COUNT(account_id) AS total
+//                                     FROM account_status
+//                                     GROUP BY date
+//                                     UNION ALL 
+//                                 SELECT
+//                                     DATE(timestamp_deleted) AS time_deleted,
+//                                     -COUNT(CASE WHEN account_status = 0 THEN 1 ELSE NULL END) AS deletion_count
+//                                     FROM account_status
+//                                     GROUP BY time_deleted
+//                                     ORDER BY date)
+//                                         SELECT DISTINCT
+//                                             date, SUM(total) OVER (ORDER BY date) AS cumulative_total FROM data`
+//     db.query(dbQuery, (error, result) => {
+//         if(error){
+//             console.log(`screwed up query`, error);
+//         }
+//         console.log(result);
+//         if(result.length !== 0){
+//             res.send(result)
+//         } else {
+//             res.send({error: `No accounts created yet`})
+//         }
+//     })
+// })
 
 //post method to add message to the info_dbb table
-app.post('/api/add', (req, res) => {
-    const {id, timestamp, first, last, email, message} = req.body;
-    const dbQuery = "INSERT INTO info_db VALUES (?, ?, ?, ?, ?, ?)";
-    db.query(dbQuery, [id, timestamp, first, last, email, message], (error, result) => {
-        if(error) {
-            console.log("error adding to db ", error);
-        }
-        console.log('added to the db ', result);
-        let addedInfo = {id: id, timestamp, first, last, email, message}
-        res.send(addedInfo);
-    })
-});
+// app.post('/api/add', (req, res) => {
+//     const {id, timestamp, first, last, email, message} = req.body;
+//     const dbQuery = "INSERT INTO info_db VALUES (?, ?, ?, ?, ?, ?)";
+//     db.query(dbQuery, [id, timestamp, first, last, email, message], (error, result) => {
+//         if(error) {
+//             console.log("error adding to db ", error);
+//         }
+//         console.log('added to the db ', result);
+//         let addedInfo = {id: id, timestamp, first, last, email, message}
+//         res.send(addedInfo);
+//     })
+// });
 
-//get method to retrieve user data from user_db
-app.get('/admin/all', (req, res) => {
-    console.log(`endpoint hit`);
-    const dbQuery = 'SELECT * FROM user_db ORDER BY timestamp';
-    db.query(dbQuery, (error, result) => {
-        if(error){
-            console.log(`error getting user data from the db`, error);
-        } else if(result.length === 0){
-            console.log(`No users in the db`);
-            res.send({ error: `no users in the user_db`});
-        } else {
-            console.log(result);
-            res.send(result);
-        }
-    })
-})
+// //get method to retrieve user data from user_db
+// app.get('/admin/all', (req, res) => {
+//     console.log(`endpoint hit`);
+//     const dbQuery = 'SELECT * FROM user_db ORDER BY timestamp';
+//     db.query(dbQuery, (error, result) => {
+//         if(error){
+//             console.log(`error getting user data from the db`, error);
+//         } else if(result.length === 0){
+//             console.log(`No users in the db`);
+//             res.send({ error: `no users in the user_db`});
+//         } else {
+//             console.log(result);
+//             res.send(result);
+//         }
+//     })
+// })
 
 //get messages that user sent for their profile
-app.get('/api/get/:email', (req, res) => {
-    const {email} = req.params;
-    const dbQuery = "SELECT * FROM info_db WHERE EMAIL=? ORDER BY timestamp DESC";
-    db.query(dbQuery, email, (error, result) => {
-        if(error){
-            console.log("error getting info!", error);
-        }
-        if(result.length === 0){
-            res.send({error: `No message to show sent by ${email}`});
-        } else {
-            res.send(result)
-        }
-    })
-})
+// app.get('/api/get/:email', (req, res) => {
+//     const {email} = req.params;
+//     const dbQuery = "SELECT * FROM info_db WHERE EMAIL=? ORDER BY timestamp DESC";
+//     db.query(dbQuery, email, (error, result) => {
+//         if(error){
+//             console.log("error getting info!", error);
+//         }
+//         if(result.length === 0){
+//             res.send({error: `No message to show sent by ${email}`});
+//         } else {
+//             res.send(result)
+//         }
+//     })
+// })
 
 //add get method for login and Create Account
 // app.get('/user/get/:email/:password', (req, res) => {
@@ -205,22 +209,22 @@ app.get('/api/get/:email', (req, res) => {
 // });
 
 //method to get user via email for Oauth/SSO
-app.get('/user/:email', (req, res) => {
-    console.log(req.params);
-    const dbQuery=`SELECT * FROM user_db WHERE email=?`
-    db.query(dbQuery, req.params.email, (error, result) => {
-        if(error){
-            console.log(`Error fetching user`);
-            res.send({Error: `User name does not exist in our system!`})
-        } else {
-            if(result.length !== 0){
-                res.send(result);
-            } else {
-                res.send({error: `Username ${req.params.email} does not exist in our system!`})
-            }
-        }
-    })
-})
+// app.get('/user/:email', (req, res) => {
+//     console.log(req.params);
+//     const dbQuery=`SELECT * FROM user_db WHERE email=?`
+//     db.query(dbQuery, req.params.email, (error, result) => {
+//         if(error){
+//             console.log(`Error fetching user`);
+//             res.send({Error: `User name does not exist in our system!`})
+//         } else {
+//             if(result.length !== 0){
+//                 res.send(result);
+//             } else {
+//                 res.send({error: `Username ${req.params.email} does not exist in our system!`})
+//             }
+//         }
+//     })
+// })
 
 //method to get a user by specific id
 // app.get('/user/get/:id', (req, res) => {
@@ -237,23 +241,23 @@ app.get('/user/:email', (req, res) => {
 // })
 
 //add Post method for Create Account
-app.post('/user/add', (req, res) => {
-    console.log(req.body);
-    const { id, first, last, email, password, admin } = req.body;
-    bcrypt.hash(password, saltRounds).then((hashedPassword) => {
-        console.log(hashedPassword);
-        console.log(`add to user db: ${id}, ${first}, ${last}, ${email}, ${hashedPassword}, and if admin: ${admin}`);
-        const dbQuery = "INSERT INTO user_db VALUES(?, CURRENT_TIMESTAMP,?, ?, ?, ?, ?)";
-        db.query(dbQuery, [id, first, last, email, hashedPassword, admin], (error, result) => {
-            if(error){
-                console.log(`got an error entering user into db`, error);
-            }
-            console.log(`added user to db`, result);
-            let addedUser = {id: id, first: first, last: last, email: email, password: password, admin: admin}
-            res.send(addedUser);
-        })
-    })
-});
+// app.post('/user/add', (req, res) => {
+//     console.log(req.body);
+//     const { id, first, last, email, password, admin } = req.body;
+//     bcrypt.hash(password, saltRounds).then((hashedPassword) => {
+//         console.log(hashedPassword);
+//         console.log(`add to user db: ${id}, ${first}, ${last}, ${email}, ${hashedPassword}, and if admin: ${admin}`);
+//         const dbQuery = "INSERT INTO user_db VALUES(?, CURRENT_TIMESTAMP,?, ?, ?, ?, ?)";
+//         db.query(dbQuery, [id, first, last, email, hashedPassword, admin], (error, result) => {
+//             if(error){
+//                 console.log(`got an error entering user into db`, error);
+//             }
+//             console.log(`added user to db`, result);
+//             let addedUser = {id: id, first: first, last: last, email: email, password: password, admin: admin}
+//             res.send(addedUser);
+//         })
+//     })
+// });
 
 //add PUT method to update forgotten password
 // app.put('/user/put/:id', (req, res) => {
@@ -315,36 +319,36 @@ app.post('/user/add', (req, res) => {
 //         }
 //     })
 // })
-//method to add deleted user to the deletion table ----- may me not necessary
-app.put(`/delete/add`, (req, res) => {
-    let {id, user} = req.body;
-    console.log(user);
-    console.log(id);
-    let dbQuery = `INSERT INTO deletion_table VALUES(?, CURRENT_TIMESTAMP, ?, ?, ?, ?)`;
-    db.query(dbQuery, [id, user.id, user.first, user.last, user.email], (error, result) => {
-        if(error) {
-            console.log(`there was an error entering into db`, error);
-        } else {
-            let deletedUser = {id: id, userId: user.id, first: user.first, last: user.last, email: user.email}
-            res.send(deletedUser);
-        }
-    })
-});
+// //method to add deleted user to the deletion table ----- may me not necessary
+// app.put(`/delete/add`, (req, res) => {
+//     let {id, user} = req.body;
+//     console.log(user);
+//     console.log(id);
+//     let dbQuery = `INSERT INTO deletion_table VALUES(?, CURRENT_TIMESTAMP, ?, ?, ?, ?)`;
+//     db.query(dbQuery, [id, user.id, user.first, user.last, user.email], (error, result) => {
+//         if(error) {
+//             console.log(`there was an error entering into db`, error);
+//         } else {
+//             let deletedUser = {id: id, userId: user.id, first: user.first, last: user.last, email: user.email}
+//             res.send(deletedUser);
+//         }
+//     })
+// });
 
 //delete user from the user_db table
-app.delete(`/delete/:id`, (req, res) => {
-    const {id} = req.params;
-    const dbQuery = "DELETE FROM user_db WHERE id=?";
-    console.log(`deleting on server`);
-    db.query(dbQuery, id, (error, result) => {
-        if(error){
-            console.log(`there was an error finding user ${id}`);
-        } else {
-            console.log(`account was deleted`);
-            res.send({deleteMessage: `Your account was deleted! We are sad to see you go, please come back soon!`})
-        }
-    })
-});
+// app.delete(`/delete/:id`, (req, res) => {
+//     const {id} = req.params;
+//     const dbQuery = "DELETE FROM user_db WHERE id=?";
+//     console.log(`deleting on server`);
+//     db.query(dbQuery, id, (error, result) => {
+//         if(error){
+//             console.log(`there was an error finding user ${id}`);
+//         } else {
+//             console.log(`account was deleted`);
+//             res.send({deleteMessage: `Your account was deleted! We are sad to see you go, please come back soon!`})
+//         }
+//     })
+// });
 
 //method to update the account_status table upon deletion of account
 // app.put(`/user/account/delete`, (req, res) => {

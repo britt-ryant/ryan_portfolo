@@ -9,7 +9,7 @@ export const addInfoAsync = createAsyncThunk(
         console.log(`sending payload from front end to server ----> ${payload}`);
         const id = nanoid();
         const timestamp = new Date().toISOString();
-        const response = await fetch(`http://localhost:5000/api/add`,
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/add`,
         {
             method: 'POST',
             headers: {
@@ -35,7 +35,7 @@ export const getMessagesByUserAsync = createAsyncThunk(
     '/api/getMessagesByUserAsync',
     async(payload) => {
         let email = payload.toLowerCase();
-        const response = await fetch(`http://localhost:5000/api/get/${email}`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/get/${email}`)
         if(response.ok){
             let messageList = await response.json();
             return messageList;
@@ -46,7 +46,7 @@ export const getMessagesByUserAsync = createAsyncThunk(
 export const getMessageCountAsync = createAsyncThunk(
     '/api/getMessageCountAsync',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/api/totalMessages`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/totalMessages`)
         if(response.ok){
             let messageCount = await response.json()
             return {messageCount};
@@ -57,7 +57,7 @@ export const getMessageCountAsync = createAsyncThunk(
 export const getAllMessagesAsync = createAsyncThunk(
     '/api/getAllMessagesAsync',
     async(payload) => {
-        const response = await fetch(`http://localhost:5000/api/allMessages`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/allMessages`)
         if(response.ok){
             let messageList = await response.json();
             return messageList;
@@ -69,7 +69,7 @@ export const getMessagesBySearchAsync = createAsyncThunk(
     '/api/getMessagesBySearcAsync',
     async(payload) => {
         // console.log(payload);
-        const response = await fetch(`http://localhost:5000/search/${payload.select}/${payload.searchString}`)
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/search/${payload.select}/${payload.searchString}`)
         if(response.ok){
             let messageList = await response.json();
             return messageList;

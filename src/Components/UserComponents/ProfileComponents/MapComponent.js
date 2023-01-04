@@ -64,7 +64,7 @@ const MapComponent = (props) => {
         return (
             <React.Fragment>
                    <LoadScript
-                        googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+                        googleMapsApiKey={process.env.REACT_APP_NEW_GOOGLE_MAPS_API_KEY}>
                             <GoogleMap
                                 mapContainerStyle={mapStyles}
                                 zoom={13}
